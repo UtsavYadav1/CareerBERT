@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerBERT - Smarter Job Matching with AI</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --primary-color: #2563EB;
+            --secondary-color: #9333EA;
+            --success-color: #16A34A;
+            --danger-color: #DC2626;
+            --dark-bg: #0F172A;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-color: #0F172A;
+            --bs-body-bg: #0F172A;
+            --bs-body-color: #E2E8F0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+        
+        [data-bs-theme="dark"] .navbar {
+            background: rgba(15, 23, 42, 0.95) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #64748B !important;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: var(--card-shadow);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #1D4ED8;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -3px rgba(37, 99, 235, 0.3);
+        }
+        
+        .drag-drop-area {
+            border: 2px dashed #CBD5E1;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(37, 99, 235, 0.02);
+        }
+        
+        .drag-drop-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .drag-drop-area.dragover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 8px;
+            background: #E2E8F0;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 8px;
+        }
+        
+        .spinner-border {
+            color: var(--primary-color);
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #64748B;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: #F1F5F9;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle {
+            border-color: #334155;
+            color: #94A3B8;
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle:hover {
+            background: #1E293B;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-robot me-2"></i>CareerBERT
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" onclick="toggleTheme()">
+                    <i class="bi bi-moon-fill" id="theme-icon"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about_page') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact_page') }}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid bg-light min-vh-100">
+        <div class="container py-5">
+            <!-- Hero Section -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <h1 class="display-4 fw-bold text-primary mb-3">
+                            AI-Powered Job Matching
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card animate-slide-up">
+                    <div class="card-body p-5">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="row">
+                                <!-- Resume Upload -->
+                                <div class="col-lg-6 mb-4">
+                                    <label class="form-label fw-semibold mb-3">
+                                        <i class="bi bi-file-earmark-text me-2 text-primary"></i>Upload Resume
+                                    </label>
+                                    <div class="drag-drop-area" id="dragDropArea">
+                                        <i class="bi bi-cloud-upload text-primary mb-3" style="font-size: 3rem;"></i>
+                                        <h5 class="mb-2">Drag & drop your resume here</h5>
+                                        <p class="text-muted mb-3">or click to browse files</p>
+                                        <input type="file" 
+                                               class="d-none" 
+                                               id="resumeFile" 
+                                               name="resume" 
+                                               accept=".pdf,.txt" 
+                                               required>
+                                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('resumeFile').click()">
+                                            <i class="bi bi-folder2-open me-2"></i>Choose File
+                                        </button>
+                                        <div class="mt-2">
+                                            <small class="text-muted">Supports PDF and TXT files</small>
+                                        </div>
+                                        <div id="fileName" class="mt-2 text-success fw-semibold" style="display: none;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Job Description -->
+                                <div class="col-lg-6 mb-4">
+                                    <label for="jobDescription" class="form-label fw-semibold mb-3">
+                                        <i class="bi bi-briefcase me-2 text-primary"></i>Job Description
+                                    </label>
+                                    <textarea class="form-control h-100" 
+                                              id="jobDescription" 
+                                              name="job_description" 
+                                              rows="8" 
+                                              placeholder="Paste the complete job description here..."
+                                              required></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="row mb-4">
+                                <div class="col-lg-6">
+                                    <label for="jobLocation" class="form-label fw-semibold">
+                                        <i class="bi bi-geo-alt me-2 text-primary"></i>Preferred Location (optional)
+                                    </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="jobLocation"
+                                           name="location"
+                                           placeholder="e.g., San Francisco, CA or Remote">
+                                    <div class="form-text">Used to personalize job recommendations</div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 py-3" id="submitBtn">
+                                    <i class="bi bi-magic me-2"></i>Analyze Resume
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="row justify-content-center mt-4" id="progressContainer" style="display: none;">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mb-2">Analyzing Your Resume</h5>
+                        <p class="text-muted mb-0" id="progressText">Initializing AI analysis...</p>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" 
+                             role="progressbar" 
+                             style="width: 0%" 
+                             id="progressBar"></div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="bi bi-file-text text-primary mb-2 d-block"></i>
+                            <small class="text-muted">Parsing Resume</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-cpu text-primary mb-2 d-block"></i>
+                            <small class="text-muted">AI Analysis</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="bi bi-search text-primary mb-2 d-block"></i>
+                            <small class="text-muted">Finding Jobs</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Container -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div id="alertContainer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<section id="about" class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-2"></i>About CareerBERT</h2>
+                    <p class="text-muted">
+                        CareerBERT helps you compare your resume with job descriptions using a blend of NLP and similarity scoring techniques.
+                        Upload a resume PDF and paste a job description to get clear, visual insights on your match.
+                    </p>
+                </div>
+                <div class="row text-center g-4">
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <i class="bi bi-graph-up fs-2 text-success"></i>
+                            <h6 class="mt-2 mb-1">Similarity Scores</h6>
+                            <p class="small text-muted mb-0">Overall, Job Description, and Skills-based metrics.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <i class="bi bi-speedometer2 fs-2 text-primary"></i>
+                            <h6 class="mt-2 mb-1">Fast & Simple</h6>
+                            <p class="small text-muted mb-0">Quick results with a clean, modern UI.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded h-100">
+                            <i class="bi bi-shield-lock fs-2 text-info"></i>
+                            <h6 class="mt-2 mb-1">Private</h6>
+                            <p class="small text-muted mb-0">Your documents stay on your machine during analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-5 bg-light border-top">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary mb-3"><i class="bi bi-envelope me-2"></i>Contact</h2>
+                    <p class="text-muted">Have feedback or feature requests? Send a message below.</p>
+                </div>
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="mb-2">Analyzing Your Resume</h5>
+                            <p class="text-muted mb-0" id="progressText">Initializing AI analysis...</p>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" 
+                                 role="progressbar" 
+                                 style="width: 0%" 
+                                 id="progressBar"></div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <i class="bi bi-file-text text-primary mb-2 d-block"></i>
+                                <small class="text-muted">Parsing Resume</small>
+                            </div>
+                            <div class="col-4">
+                                <i class="bi bi-cpu text-primary mb-2 d-block"></i>
+                                <small class="text-muted">AI Analysis</small>
+                            </div>
+                            <div class="col-4">
+                                <i class="bi bi-search text-primary mb-2 d-block"></i>
+                                <small class="text-muted">Finding Jobs</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Container -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8">
+                <div id="alertContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-5 bg-white border-top">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-2"></i>About CareerBERT</h2>
+                        <p class="text-muted">
+                            CareerBERT helps you compare your resume with job descriptions using a blend of NLP and similarity scoring techniques.
+                            Upload a resume PDF and paste a job description to get clear, visual insights on your match.
+                        </p>
+                    </div>
+                    <div class="row text-center g-4">
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded h-100">
+                                <i class="bi bi-graph-up fs-2 text-success"></i>
+                                <h6 class="mt-2 mb-1">Similarity Scores</h6>
+                                <p class="small text-muted mb-0">Overall, Job Description, and Skills-based metrics.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded h-100">
+                                <i class="bi bi-speedometer2 fs-2 text-primary"></i>
+                                <h6 class="mt-2 mb-1">Fast & Simple</h6>
+                                <p class="small text-muted mb-0">Quick results with a clean, modern UI.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded h-100">
+                                <i class="bi bi-shield-lock fs-2 text-info"></i>
+                                <h6 class="mt-2 mb-1">Private</h6>
+                                <p class="small text-muted mb-0">Your documents stay on your machine during analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5 bg-light border-top">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-primary mb-3"><i class="bi bi-envelope me-2"></i>Contact</h2>
+                        <p class="text-muted">Have feedback or feature requests? Send a message below.</p>
+                    </div>
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <form onsubmit="event.preventDefault(); CareerBERT.showAlert('Thanks! Your message has been noted.', 'success'); this.reset();">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Name</label>
+                                        <input type="text" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Message</label>
+                                        <textarea class="form-control" rows="4" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="text-end mt-3">
+                                    <button type="submit" class="btn btn-primary"><i class="bi bi-send me-2"></i>Send</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 CareerBERT. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-bs-theme');
+            
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-bs-theme', 'light');
+                themeIcon.className = 'bi bi-moon-fill';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeIcon.className = 'bi bi-sun-fill';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            html.setAttribute('data-bs-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+            
+            // Drag and drop functionality
+            const dragDropArea = document.getElementById('dragDropArea');
+            const fileInput = document.getElementById('resumeFile');
+            const fileName = document.getElementById('fileName');
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dragDropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dragDropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dragDropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // Handle dropped files
+            dragDropArea.addEventListener('drop', handleDrop, false);
+            
+            // Handle file input change
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    showFileName(this.files[0].name);
+                }
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            function highlight(e) {
+                dragDropArea.classList.add('dragover');
+            }
+            
+            function unhighlight(e) {
+                dragDropArea.classList.remove('dragover');
+            }
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    showFileName(files[0].name);
+                }
+            }
+            
+            function showFileName(name) {
+                fileName.textContent = `✓ ${name}`;
+                fileName.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

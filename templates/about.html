@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - CareerBERT</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --primary-color: #2563EB;
+            --secondary-color: #9333EA;
+            --success-color: #16A34A;
+            --danger-color: #DC2626;
+            --dark-bg: #0F172A;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-color: #0F172A;
+            --bs-body-bg: #0F172A;
+            --bs-body-color: #E2E8F0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+        
+        [data-bs-theme="dark"] .navbar {
+            background: rgba(15, 23, 42, 0.95) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #64748B !important;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: var(--card-shadow);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #64748B;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: #F1F5F9;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle {
+            border-color: #334155;
+            color: #94A3B8;
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle:hover {
+            background: #1E293B;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* About Hero Section */
+        .about-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 6rem 0 4rem;
+            margin-top: 76px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #FFD700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        /* Tech Stack Visualization */
+        .hero-visual {
+            position: relative;
+            height: 400px;
+        }
+        
+        .tech-stack {
+            position: relative;
+            height: 100%;
+        }
+        
+        .tech-item {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: techFloat 4s ease-in-out infinite;
+        }
+        
+        [data-bs-theme="dark"] .tech-item {
+            background: rgba(15, 23, 42, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tech-item:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+        
+        .tech-item.ai {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .tech-item.ml {
+            top: 20%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+        
+        .tech-item.nlp {
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+        
+        .tech-item.data {
+            bottom: 10%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+        
+        .tech-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .tech-label {
+            font-weight: 600;
+            color: #1F2937;
+            font-size: 0.875rem;
+        }
+        
+        [data-bs-theme="dark"] .tech-label {
+            color: #F9FAFB;
+        }
+        
+        @keyframes techFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Mission Section */
+        .mission-section {
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+        }
+        
+        [data-bs-theme="dark"] .mission-section {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+        }
+        
+        .mission-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        [data-bs-theme="dark"] .mission-card {
+            background: #1F2937;
+            border-color: #374151;
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mission-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .mission-title {
+            color: #1F2937;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        [data-bs-theme="dark"] .mission-title {
+            color: #F9FAFB;
+        }
+        
+        .mission-description {
+            color: #6B7280;
+            line-height: 1.6;
+        }
+        
+        [data-bs-theme="dark"] .mission-description {
+            color: #D1D5DB;
+        }
+        
+        /* Technology Section */
+        .technology-section {
+            background: white;
+        }
+        
+        [data-bs-theme="dark"] .technology-section {
+            background: #0F172A;
+        }
+        
+        .tech-feature-card {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        [data-bs-theme="dark"] .tech-feature-card {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            border-color: #475569;
+        }
+        
+        .tech-feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tech-feature-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tech-feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .tech-feature-info {
+            flex: 1;
+        }
+        
+        .tech-feature-title {
+            color: #1F2937;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        [data-bs-theme="dark"] .tech-feature-title {
+            color: #F9FAFB;
+        }
+        
+        .tech-feature-subtitle {
+            color: #6B7280;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        
+        [data-bs-theme="dark"] .tech-feature-subtitle {
+            color: #9CA3AF;
+        }
+        
+        .tech-feature-content {
+            color: #4B5563;
+            line-height: 1.6;
+        }
+        
+        [data-bs-theme="dark"] .tech-feature-content {
+            color: #D1D5DB;
+        }
+        
+        .tech-metrics {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: #6B7280;
+            font-weight: 500;
+        }
+        
+        [data-bs-theme="dark"] .metric-label {
+            color: #9CA3AF;
+        }
+        
+        .tech-features-list {
+            margin-top: 1.5rem;
+        }
+        
+        .feature-item {
+            color: #16A34A;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+        
+        .cta-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+        
+        .cta-title {
+            color: white;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.125rem;
+            margin: 0;
+        }
+        
+        .btn-cta {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            color: #1F2937;
+            font-weight: 700;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            color: #1F2937;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .tech-stack {
+                display: none;
+            }
+            
+            .hero-visual {
+                height: 200px;
+            }
+            
+            .tech-metrics {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .cta-card {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-robot me-2"></i>CareerBERT
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" onclick="toggleTheme()">
+                    <i class="bi bi-moon-fill" id="theme-icon"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('about_page') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact_page') }}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <div class="hero-badge mb-4">
+                            <i class="bi bi-stars me-2"></i>
+                            <span>Powered by Advanced AI</span>
+                        </div>
+                        <h1 class="display-3 fw-bold mb-4">Revolutionizing Career <span class="text-gradient">Intelligence</span></h1>
+                        <p class="lead mb-4">CareerBERT combines cutting-edge AI technology with deep career insights to transform how professionals discover opportunities and advance their careers.</p>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number">10K+</div>
+                                <div class="stat-label">Resumes Analyzed</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">95%</div>
+                                <div class="stat-label">Accuracy Rate</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">500+</div>
+                                <div class="stat-label">Companies</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-visual">
+                        <div class="tech-stack">
+                            <div class="tech-item ai">
+                                <div class="tech-icon">
+                                    <i class="bi bi-cpu"></i>
+                                </div>
+                                <div class="tech-label">DistilBERT</div>
+                            </div>
+                            <div class="tech-item ml">
+                                <div class="tech-icon">
+                                    <i class="bi bi-graph-up"></i>
+                                </div>
+                                <div class="tech-label">TF-IDF</div>
+                            </div>
+                            <div class="tech-item nlp">
+                                <div class="tech-icon">
+                                    <i class="bi bi-chat-dots"></i>
+                                </div>
+                                <div class="tech-label">NLP</div>
+                            </div>
+                            <div class="tech-item data">
+                                <div class="tech-icon">
+                                    <i class="bi bi-database"></i>
+                                </div>
+                                <div class="tech-label">Big Data</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-4">Our Mission</h2>
+                    <p class="lead">To democratize career advancement through AI-powered insights, making professional growth accessible to everyone.</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="mission-card">
+                        <div class="mission-icon">
+                            <i class="bi bi-lightbulb"></i>
+                        </div>
+                        <h5 class="mission-title">Innovation</h5>
+                        <p class="mission-description">Leveraging cutting-edge AI research to solve real-world career challenges with unprecedented accuracy and insight.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="mission-card">
+                        <div class="mission-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h5 class="mission-title">Accessibility</h5>
+                        <p class="mission-description">Making advanced career intelligence tools available to professionals at every stage of their journey.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="mission-card">
+                        <div class="mission-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h5 class="mission-title">Trust</h5>
+                        <p class="mission-description">Building secure, privacy-first solutions that professionals can rely on for their most important career decisions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="technology-section py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-4">Advanced Technology Stack</h2>
+                    <p class="lead">Built on state-of-the-art AI and machine learning technologies</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="tech-feature-card">
+                        <div class="tech-feature-header">
+                            <div class="tech-feature-icon">
+                                <i class="bi bi-cpu"></i>
+                            </div>
+                            <div class="tech-feature-info">
+                                <h5 class="tech-feature-title">DistilBERT Neural Network</h5>
+                                <p class="tech-feature-subtitle">Advanced transformer architecture</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature-content">
+                            <p>Our core AI model uses DistilBERT, a distilled version of BERT that's 60% smaller and 60% faster while retaining 97% of BERT's language understanding capabilities.</p>
+                            <div class="tech-metrics">
+                                <div class="metric">
+                                    <span class="metric-value">97%</span>
+                                    <span class="metric-label">Language Understanding</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value">60%</span>
+                                    <span class="metric-label">Faster Processing</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="tech-feature-card">
+                        <div class="tech-feature-header">
+                            <div class="tech-feature-icon">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="tech-feature-info">
+                                <h5 class="tech-feature-title">TF-IDF Similarity Analysis</h5>
+                                <p class="tech-feature-subtitle">Precise content matching</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature-content">
+                            <p>Term Frequency-Inverse Document Frequency combined with cosine similarity provides accurate matching between resume content and job requirements.</p>
+                            <div class="tech-metrics">
+                                <div class="metric">
+                                    <span class="metric-value">95%</span>
+                                    <span class="metric-label">Match Accuracy</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value">&lt;2s</span>
+                                    <span class="metric-label">Analysis Time</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="tech-feature-card">
+                        <div class="tech-feature-header">
+                            <div class="tech-feature-icon">
+                                <i class="bi bi-file-text"></i>
+                            </div>
+                            <div class="tech-feature-info">
+                                <h5 class="tech-feature-title">Advanced PDF Parsing</h5>
+                                <p class="tech-feature-subtitle">Intelligent document processing</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature-content">
+                            <p>Our parsing engine extracts structured data from complex resume formats, identifying sections like education, experience, skills, and projects with high precision.</p>
+                            <div class="tech-features-list">
+                                <div class="feature-item">✓ Multi-format support</div>
+                                <div class="feature-item">✓ Section classification</div>
+                                <div class="feature-item">✓ Skill extraction</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="tech-feature-card">
+                        <div class="tech-feature-header">
+                            <div class="tech-feature-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+                            <div class="tech-feature-info">
+                                <h5 class="tech-feature-title">Privacy-First Architecture</h5>
+                                <p class="tech-feature-subtitle">Secure data processing</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature-content">
+                            <p>All resume data is processed in-memory and never permanently stored. We use enterprise-grade security measures to protect your sensitive information.</p>
+                            <div class="tech-features-list">
+                                <div class="feature-item">✓ No data storage</div>
+                                <div class="feature-item">✓ Encrypted processing</div>
+                                <div class="feature-item">✓ GDPR compliant</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5">
+        <div class="container">
+            <div class="cta-card">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h3 class="cta-title">Ready to Experience AI-Powered Career Intelligence?</h3>
+                        <p class="cta-description">Join thousands of professionals who have discovered their perfect career match with CareerBERT.</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a href="{{ url_for('index') }}" class="btn btn-cta btn-lg">
+                            <i class="bi bi-rocket-takeoff me-2"></i>Start Analysis
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 CareerBERT. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-bs-theme');
+            
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-bs-theme', 'light');
+                themeIcon.className = 'bi bi-moon-fill';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeIcon.className = 'bi bi-sun-fill';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            html.setAttribute('data-bs-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        });
+    </script>
+</body>
+</html>

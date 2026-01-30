@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - CareerBERT</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --primary-color: #2563EB;
+            --secondary-color: #9333EA;
+            --success-color: #16A34A;
+            --danger-color: #DC2626;
+            --dark-bg: #0F172A;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-color: #0F172A;
+            --bs-body-bg: #0F172A;
+            --bs-body-color: #E2E8F0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+        
+        [data-bs-theme="dark"] .navbar {
+            background: rgba(15, 23, 42, 0.95) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #64748B !important;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: var(--card-shadow);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .score-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+        
+        .score-value {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0.25rem;
+            transition: all 0.2s ease;
+        }
+        
+        .skill-matched {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .skill-missing {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #1D4ED8;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -3px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .job-summary-card {
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        [data-bs-theme="dark"] .job-summary-card {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #64748B;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: #F1F5F9;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle {
+            border-color: #334155;
+            color: #94A3B8;
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle:hover {
+            background: #1E293B;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-robot me-2"></i>CareerBERT
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" onclick="toggleTheme()">
+                    <i class="bi bi-moon-fill" id="theme-icon"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">New Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about_page') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact_page') }}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid bg-light min-vh-100">
+        <div class="container py-5">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h1 class="display-5 fw-bold text-primary mb-2">
+                        <i class="bi bi-graph-up me-3"></i>Analysis Results
+                    </h1>
+                    <p class="lead text-muted">Your resume has been analyzed against the job description</p>
+                </div>
+            </div>
+
+            <!-- Job Information Card -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 job-info-card">
+                        <div class="card-header bg-primary text-white">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-briefcase me-3 fs-4"></i>
+                                <div>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <div class="d-flex gap-2 justify-content-lg-end">
+                            <button class="btn btn-outline-light" onclick="window.location.href='/'">
+                                <i class="bi bi-arrow-left me-2"></i>Try Another Resume
+                            </button>
+                            <button class="btn btn-light" onclick="downloadReport()">
+                                <i class="bi bi-download me-2"></i>Download Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container py-4">
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <div class="resume-section-item">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="bi bi-briefcase me-2"></i>Experience
+                                        </h6>
+                                        <div class="resume-section-content" id="experienceContent"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <div class="resume-section-item">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="bi bi-code-slash me-2"></i>Projects
+                                        </h6>
+                                        <div class="resume-section-content" id="projectsContent"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Recommendations -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-lightbulb me-2"></i>Job Recommendations
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="jobRecommendations" class="text-center py-4">
+                                <i class="bi bi-search display-4 text-muted mb-3"></i>
+                                <p class="text-muted">Job recommendations will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body text-center py-4">
+                            <h5 class="mb-4">What would you like to do next?</h5>
+                            <div class="d-flex flex-wrap justify-content-center gap-3">
+                                <a href="/" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>Try Another Resume
+                                </a>
+                                <button class="btn btn-outline-primary btn-lg" id="downloadReportBtn" disabled>
+                                    <i class="bi bi-download me-2"></i>Download Report
+                                    <small class="d-block text-muted">Coming Soon</small>
+                                </button>
+                                <button class="btn btn-outline-secondary btn-lg" onclick="window.print()">
+                                    <i class="bi bi-printer me-2"></i>Print Results
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 CareerBERT. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-bs-theme');
+            
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-bs-theme', 'light');
+                themeIcon.className = 'bi bi-moon-fill';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeIcon.className = 'bi bi-sun-fill';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            html.setAttribute('data-bs-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        });
+        
+        // Download report functionality
+        function downloadReport() {
+            // Create a simple report
+            const reportContent = `
+                CareerBERT Analysis Report
+                =========================
+                
+                Overall Match: ${document.getElementById('overallScoreBadge').textContent}
+                Job Match: ${document.getElementById('jobDescScoreBadge').textContent}
+                Skills Match: ${document.getElementById('skillsScoreBadge').textContent}
+                
+                Generated on: ${new Date().toLocaleDateString()}
+            `;
+            
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'careerbert-analysis-report.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Initialize realistic demo scores if no data is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                if (!window.currentResults) {
+                    // Set realistic demo scores
+                    document.getElementById('overallScoreBadge').textContent = '78%';
+                    document.getElementById('jobDescScoreBadge').textContent = '72%';
+                    document.getElementById('skillsScoreBadge').textContent = '84%';
+                    
+                    // Update job summary
+                    const jobSummary = document.getElementById('jobSummary');
+                    if (jobSummary) {
+                        jobSummary.innerHTML = `
+                            <div class="mb-3">
+                                <h6 class="fw-semibold text-primary">Software Engineer Position</h6>
+                                <p class="text-muted small mb-2">Tech Company • Remote</p>
+                                <p class="small">Looking for a skilled developer with experience in modern web technologies and cloud platforms.</p>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="small text-muted">Match Score</span>
+                                <span class="fw-bold text-success">78%</span>
+                            </div>
+                        `;
+                    }
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

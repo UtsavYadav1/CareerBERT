@@ -1,0 +1,2847 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - CareerBERT</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --primary-color: #2563EB;
+            --secondary-color: #9333EA;
+            --success-color: #16A34A;
+            --danger-color: #DC2626;
+            --dark-bg: #0F172A;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-color: #0F172A;
+            --bs-body-bg: #0F172A;
+            --bs-body-color: #E2E8F0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.3s ease;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        /* Fix for smooth scrolling between columns */
+        .main-dashboard {
+            min-height: 100vh;
+        }
+        
+        .left-column {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E0 transparent;
+        }
+        
+        .left-column::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .left-column::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .left-column::-webkit-scrollbar-thumb {
+            background-color: #CBD5E0;
+            border-radius: 2px;
+        }
+        
+        .left-column::-webkit-scrollbar-thumb:hover {
+            background-color: #A0AEC0;
+        }
+        
+        .right-column {
+            min-height: 100vh;
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 991.98px) {
+            .left-column {
+                position: relative;
+                top: auto;
+                max-height: none;
+                overflow-y: visible;
+                margin-bottom: 2rem;
+            }
+            
+            .main-dashboard {
+                min-height: auto;
+            }
+            
+            .right-column {
+                min-height: auto;
+            }
+        }
+        
+        /* Improve scroll performance */
+        .left-column,
+        .right-column {
+            will-change: scroll-position;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+        
+        [data-bs-theme="dark"] .navbar {
+            background: rgba(15, 23, 42, 0.95) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #64748B !important;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: var(--card-shadow);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .score-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+        
+        .score-value {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0.25rem;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .skill-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .skill-tag:hover::before {
+            left: 100%;
+        }
+        
+        .skill-matched {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+        
+        .skill-matched:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        
+        .skill-missing {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+        
+        .skill-missing:hover {
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+        
+        .skill-recommended {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+        
+        .skill-recommended:hover {
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .legend-dot.skill-matched {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+        
+        .legend-dot.skill-missing {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+        }
+        
+        .legend-dot.skill-recommended {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+        }
+        
+        .skill-gap-legend {
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 8px;
+            padding: 0.75rem;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .skill-gap-legend {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 320px;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .chart-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        [data-bs-theme="dark"] .chart-container {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            border-color: rgba(51, 65, 85, 0.8);
+        }
+        
+        .chart-container canvas {
+            border-radius: 12px;
+        }
+        
+        /* Chart card enhancements */
+        .card .card-body:has(.chart-container) {
+            padding: 1.5rem;
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 1rem;
+        }
+        
+        [data-bs-theme="dark"] .card-title {
+            color: #F9FAFB;
+        }
+        
+        .card-title i {
+            font-size: 1.25rem;
+            margin-right: 0.75rem;
+        }
+        
+        /* Chart loading animation - simplified */
+        .chart-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            color: #6B7280;
+            font-size: 14px;
+        }
+        
+        @keyframes chartFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .chart-container.loaded {
+            animation: chartFadeIn 0.6s ease-out;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #1D4ED8;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -3px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .job-summary-card {
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            height: fit-content;
+            margin-bottom: 0;
+        }
+        
+        [data-bs-theme="dark"] .job-summary-card {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #64748B;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: #F1F5F9;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle {
+            border-color: #334155;
+            color: #94A3B8;
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle:hover {
+            background: #1E293B;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .suggestions-panel {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+        }
+        
+        [data-bs-theme="dark"] .suggestions-panel {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+        }
+        
+        .suggestions-panel .card-body {
+            color: inherit;
+        }
+        
+        [data-bs-theme="dark"] .suggestions-panel .card-body {
+            color: #E2E8F0;
+        }
+        
+        /* Advanced Resume Analysis Styles */
+        .resume-analysis-card .card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            padding: 1.5rem;
+        }
+        
+        .resume-section {
+            border-bottom: 1px solid #E2E8F0;
+            transition: all 0.3s ease;
+        }
+        
+        [data-bs-theme="dark"] .resume-section {
+            border-bottom-color: #334155;
+        }
+        
+        .resume-section:last-child {
+            border-bottom: none;
+        }
+        
+        .resume-section-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+        }
+        
+        .resume-section-header:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        [data-bs-theme="dark"] .resume-section-header:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .education-icon {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            color: white;
+        }
+        
+        .experience-icon {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+        }
+        
+        .skills-icon {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+        }
+        
+        .projects-icon {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+        }
+        
+        .section-info {
+            flex: 1;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin: 0;
+        }
+        
+        [data-bs-theme="dark"] .section-title {
+            color: #F9FAFB;
+        }
+        
+        .section-subtitle {
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+        
+        [data-bs-theme="dark"] .section-subtitle {
+            color: #9CA3AF;
+        }
+        
+        .section-toggle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        [data-bs-theme="dark"] .section-toggle {
+            background: #374151;
+        }
+        
+        .section-toggle i {
+            transition: transform 0.3s ease;
+            color: #6B7280;
+        }
+        
+        [data-bs-theme="dark"] .section-toggle i {
+            color: #9CA3AF;
+        }
+        
+        .resume-section.collapsed .section-toggle i {
+            transform: rotate(-90deg);
+        }
+        
+        .resume-section-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.4s ease;
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E0 transparent;
+        }
+        
+        .resume-section-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .resume-section-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .resume-section-content::-webkit-scrollbar-thumb {
+            background-color: #CBD5E0;
+            border-radius: 3px;
+        }
+        
+        .resume-section-content::-webkit-scrollbar-thumb:hover {
+            background-color: #A0AEC0;
+        }
+        
+        .resume-section.collapsed .resume-section-content {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        
+        .content-placeholder {
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            color: #6B7280;
+            font-style: italic;
+        }
+        
+        [data-bs-theme="dark"] .content-placeholder {
+            color: #9CA3AF;
+        }
+        
+        .placeholder-animation {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E5E7EB;
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.75rem;
+        }
+        
+        [data-bs-theme="dark"] .placeholder-animation {
+            border-color: #374151;
+            border-top-color: var(--primary-color);
+        }
+        
+        .resume-content h6 {
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .resume-content p {
+            margin-bottom: 0.75rem;
+            color: #4B5563;
+        }
+        
+        [data-bs-theme="dark"] .resume-content p {
+            color: #D1D5DB;
+        }
+        
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .resume-content .skill-tag {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .resume-content .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .resume-expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .resume-expanded .resume-analysis-card {
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 0;
+        }
+        
+        /* Enhanced Job Summary Styles */
+        .job-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .job-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .job-info {
+            flex: 1;
+        }
+        
+        .job-title {
+            color: #1F2937;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        [data-bs-theme="dark"] .job-title {
+            color: #F9FAFB;
+        }
+        
+        .job-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .job-meta span {
+            font-size: 0.875rem;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+        }
+        
+        [data-bs-theme="dark"] .job-meta span {
+            color: #9CA3AF;
+        }
+        
+        .match-score-card {
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        [data-bs-theme="dark"] .match-score-card {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        .score-display {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        
+        .score-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        .score-breakdown {
+            flex: 1;
+        }
+        
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .score-dot.experience {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+        
+        .score-dot.skills {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+        
+        .score-dot.education {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+        
+        .score-text {
+            font-size: 0.875rem;
+            color: #4B5563;
+        }
+        
+        [data-bs-theme="dark"] .score-text {
+            color: #D1D5DB;
+        }
+        
+        .job-description-preview {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .job-description-preview {
+            background: #1F2937;
+        }
+        
+        .description-text {
+            color: #4B5563;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+        
+        [data-bs-theme="dark"] .description-text {
+            color: #D1D5DB;
+        }
+        
+        .expand-description {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        
+        .skill-progress-bars {
+            margin-bottom: 1rem;
+        }
+        
+        .skill-progress-item {
+            margin-bottom: 1rem;
+        }
+        
+        .skill-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        [data-bs-theme="dark"] .skill-name {
+            color: #E5E7EB;
+        }
+        
+        .skill-percentage {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1F2937;
+        }
+        
+        [data-bs-theme="dark"] .skill-percentage {
+            color: #F9FAFB;
+        }
+        
+        .skill-progress {
+            height: 8px;
+            border-radius: 4px;
+            background: #E5E7EB;
+        }
+        
+        [data-bs-theme="dark"] .skill-progress {
+            background: #374151;
+        }
+        
+        .skill-progress .progress-bar {
+            border-radius: 4px;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        [data-bs-theme="dark"] .section-title {
+            color: #F9FAFB;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            text-align: left;
+            transition: all 0.3s ease;
+            background: #F9FAFB;
+            color: #1F2937;
+        }
+        
+        [data-bs-theme="dark"] .action-btn {
+            background: #1F2937;
+            color: #F9FAFB;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .action-btn.secondary {
+            background: #F3F4F6;
+            border: 2px solid #E5E7EB;
+        }
+        
+        [data-bs-theme="dark"] .action-btn.secondary {
+            background: #374151;
+            border-color: #4B5563;
+        }
+        
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .action-btn.secondary .btn-icon {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-content {
+            flex: 1;
+        }
+        
+        .btn-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .btn-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        /* Job Recommendations Styles */
+        .job-recommendations-card .recommendations-header {
+            background: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
+            border: none;
+            padding: 1.5rem;
+        }
+        
+        .recommendation-stats {
+            text-align: center;
+        }
+        
+        .stat-item {
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        .job-recommendations-list {
+            padding: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E0 transparent;
+        }
+        
+        .job-recommendations-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .job-recommendations-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .job-recommendations-list::-webkit-scrollbar-thumb {
+            background-color: #CBD5E0;
+            border-radius: 3px;
+        }
+        
+        .job-recommendations-list::-webkit-scrollbar-thumb:hover {
+            background-color: #A0AEC0;
+        }
+        
+        .job-recommendation-item {
+            border: 1px solid #E5E7EB;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        [data-bs-theme="dark"] .job-recommendation-item {
+            background: #1F2937;
+            border-color: #374151;
+        }
+        
+        .job-recommendation-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .job-item-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .company-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .company-logo.google {
+            background: linear-gradient(135deg, #4285F4, #34A853);
+        }
+        
+        .company-logo.amazon {
+            background: linear-gradient(135deg, #FF9900, #FF6600);
+        }
+        
+        .job-details {
+            flex: 1;
+        }
+        
+        .job-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        [data-bs-theme="dark"] .job-title {
+            color: #F9FAFB;
+        }
+        
+        .job-company {
+            font-weight: 500;
+            color: #4B5563;
+            margin-bottom: 0.25rem;
+        }
+        
+        [data-bs-theme="dark"] .job-company {
+            color: #D1D5DB;
+        }
+        
+        .job-location {
+            font-size: 0.875rem;
+            color: #6B7280;
+        }
+        
+        [data-bs-theme="dark"] .job-location {
+            color: #9CA3AF;
+        }
+        
+        .job-match-score {
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .match-percentage {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #16A34A;
+            line-height: 1;
+        }
+        
+        .match-label {
+            font-size: 0.75rem;
+            color: #6B7280;
+        }
+        
+        [data-bs-theme="dark"] .match-label {
+            color: #9CA3AF;
+        }
+        
+        .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .job-tag {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        [data-bs-theme="dark"] .job-tag {
+            background: #1E3A8A;
+            color: #BFDBFE;
+        }
+        
+        .job-meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .job-meta-info span {
+            font-size: 0.875rem;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+        }
+        
+        [data-bs-theme="dark"] .job-meta-info span {
+            color: #9CA3AF;
+        }
+        
+        .job-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .recommendations-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #E5E7EB;
+            background: #F9FAFB;
+        }
+        
+        [data-bs-theme="dark"] .recommendations-footer {
+            border-color: #374151;
+            background: #1F2937;
+        }
+        
+        /* AI Suggestions Styles */
+        .ai-suggestions-panel .ai-suggestions-header {
+            background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+            border: none;
+            padding: 1.5rem;
+        }
+        
+        .ai-badge {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .suggestions-container {
+            padding: 1.5rem;
+        }
+        
+        .suggestion-category {
+            margin-bottom: 2rem;
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #E5E7EB;
+        }
+        
+        [data-bs-theme="dark"] .category-header {
+            border-color: #374151;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+        
+        .category-icon.success {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+        
+        .category-icon.warning {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+        
+        .category-icon.info {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        }
+        
+        .category-info {
+            flex: 1;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        [data-bs-theme="dark"] .category-title {
+            color: #F9FAFB;
+        }
+        
+        .category-subtitle {
+            font-size: 0.875rem;
+            color: #6B7280;
+            margin: 0;
+        }
+        
+        [data-bs-theme="dark"] .category-subtitle {
+            color: #9CA3AF;
+        }
+        
+        .category-count {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .suggestions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .suggestion-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: #F9FAFB;
+            border-radius: 12px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        [data-bs-theme="dark"] .suggestion-item {
+            background: #1F2937;
+        }
+        
+        .suggestion-item:hover {
+            border-left-color: var(--primary-color);
+            transform: translateX(4px);
+        }
+        
+        .suggestion-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .suggestion-content {
+            flex: 1;
+        }
+        
+        .suggestion-title {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        [data-bs-theme="dark"] .suggestion-title {
+            color: #F9FAFB;
+        }
+        
+        .suggestion-description {
+            color: #4B5563;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+        
+        [data-bs-theme="dark"] .suggestion-description {
+            color: #D1D5DB;
+        }
+        
+        .suggestion-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .suggestion-impact,
+        .suggestion-priority {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .impact-label,
+        .priority-label {
+            color: #6B7280;
+        }
+        
+        [data-bs-theme="dark"] .impact-label,
+        [data-bs-theme="dark"] .priority-label {
+            color: #9CA3AF;
+        }
+        
+        .impact-value.high,
+        .priority-value.high {
+            background: #FEE2E2;
+            color: #DC2626;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        .impact-value.medium,
+        .priority-value.medium {
+            background: #FEF3C7;
+            color: #D97706;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        [data-bs-theme="dark"] .impact-value.high,
+        [data-bs-theme="dark"] .priority-value.high {
+            background: #7F1D1D;
+            color: #FCA5A5;
+        }
+        
+        [data-bs-theme="dark"] .impact-value.medium,
+        [data-bs-theme="dark"] .priority-value.medium {
+            background: #78350F;
+            color: #FCD34D;
+        }
+        
+        .suggestions-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #E5E7EB;
+            background: #F9FAFB;
+        }
+        
+        [data-bs-theme="dark"] .suggestions-footer {
+            border-color: #374151;
+            background: #1F2937;
+        }
+        
+        .ai-powered-by {
+            display: flex;
+            align-items: center;
+            color: #6B7280;
+        }
+        
+        [data-bs-theme="dark"] .ai-powered-by {
+            color: #9CA3AF;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-robot me-2"></i>CareerBERT
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" onclick="toggleTheme()">
+                    <i class="bi bi-moon-fill" id="theme-icon"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">New Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about_page') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact_page') }}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header" style="margin-top: 76px;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-2">Resume Analysis Complete</h1>
+                    <p class="lead mb-0 opacity-90">AI-powered insights and job matching results</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex gap-2 justify-content-lg-end">
+                        <button class="btn btn-outline-light" onclick="window.location.href='/'">
+                            <i class="bi bi-arrow-left me-2"></i>Try Another Resume
+                        </button>
+                        <button class="btn btn-light" onclick="downloadReport()">
+                            <i class="bi bi-download me-2"></i>Download Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="container py-4 main-dashboard">
+        <div class="row">
+            <!-- Left Column: Job Summary -->
+            <div class="col-lg-4 mb-4 left-column">
+                <div class="job-summary-card animate-fade-in">
+                    <!-- Job Header -->
+                    <div class="job-header mb-4">
+                        <div class="job-icon">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <div class="job-info">
+                            <h5 class="job-title mb-1">Software Engineer Position</h5>
+                            <div class="job-meta">
+                                <span class="company-name">
+                                    <i class="bi bi-building me-1"></i>Tech Company
+                                </span>
+                                <span class="job-location">
+                                    <i class="bi bi-geo-alt me-1"></i>Remote
+                                </span>
+                                <span class="job-type">
+                                    <i class="bi bi-clock me-1"></i>Full-time
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Match Score Card -->
+                    <div class="match-score-card mb-4">
+                        <div class="score-header">
+                            <h6 class="mb-2">
+                                <i class="bi bi-target me-2"></i>Compatibility Score
+                            </h6>
+                        </div>
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <div class="score-value" id="overallMatchScore">0%</div>
+                                <div class="score-label">Match</div>
+                            </div>
+                            <div class="score-breakdown">
+                                <div class="score-item">
+                                    <span class="score-dot experience"></span>
+                                    <span class="score-text" id="experienceScore">Experience Relevance: 0%</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-dot skills"></span>
+                                    <span class="score-text" id="skillsScore">Technical Fit: 0%</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-dot education"></span>
+                                    <span class="score-text" id="educationScore">Background Match: 0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job Description Preview -->
+                    <div class="job-description-preview mb-4">
+                        <h6 class="section-title">
+                            <i class="bi bi-file-text me-2"></i>Job Overview
+                        </h6>
+                        <div class="description-content">
+                            <p class="description-text" id="jobDescriptionPreview">Loading job description...</p>
+                            <button class="btn btn-link btn-sm p-0 expand-description" id="showMoreBtn" onclick="toggleJobDescription()">
+                                <i class="bi bi-chevron-down me-1" id="showMoreIcon"></i>Show more
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Skill Gap Analysis -->
+                    <div class="skill-gap-section mb-4">
+                        <h6 class="section-title">
+                            <i class="bi bi-graph-up me-2"></i>Skill Gap Analysis
+                        </h6>
+                        
+                        <div class="skill-progress-bars mb-3" id="skillProgressBars">
+                            <div class="skill-progress-item">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="skill-name">Experience Relevance</span>
+                                    <span class="skill-percentage" id="jobMatchPercentage">0%</span>
+                                </div>
+                                <div class="progress skill-progress">
+                                    <div class="progress-bar bg-primary" id="jobMatchProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="skill-progress-item">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="skill-name">Technical Skills Fit</span>
+                                    <span class="skill-percentage" id="skillsMatchPercentage">0%</span>
+                                </div>
+                                <div class="progress skill-progress">
+                                    <div class="progress-bar bg-success" id="skillsMatchProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="skill-progress-item">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="skill-name">Overall Compatibility</span>
+                                    <span class="skill-percentage" id="overallMatchPercentage">0%</span>
+                                </div>
+                                <div class="progress skill-progress">
+                                    <div class="progress-bar bg-warning" id="overallMatchProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="skill-tags-container" id="skillGapTags">
+                            <div class="text-muted small mb-2">Loading skill analysis...</div>
+                        </div>
+                        
+                        <div class="skill-gap-legend mt-3">
+                            <div class="d-flex align-items-center gap-3 text-sm">
+                                <div class="d-flex align-items-center">
+                                    <span class="legend-dot skill-matched me-2"></span>
+                                    <span>Skills you have</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="legend-dot skill-missing me-2"></span>
+                                    <span>Missing skills</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="legend-dot skill-recommended me-2"></span>
+                                    <span>Recommended to learn</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h6 class="section-title mb-3">
+                            <i class="bi bi-lightning me-2"></i>Quick Actions
+                        </h6>
+                        <div class="action-buttons">
+                            <button class="action-btn primary" onclick="window.location.href='/'">
+                                <div class="btn-icon">
+                                    <i class="bi bi-plus-circle"></i>
+                                </div>
+                                <div class="btn-content">
+                                    <div class="btn-title">New Analysis</div>
+                                    <div class="btn-subtitle">Analyze another resume</div>
+                                </div>
+                            </button>
+                            <button class="action-btn secondary" onclick="downloadReport()">
+                                <div class="btn-icon">
+                                    <i class="bi bi-download"></i>
+                                </div>
+                                <div class="btn-content">
+                                    <div class="btn-title">Export Report</div>
+                                    <div class="btn-subtitle">Download as PDF</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Results -->
+            <div class="col-lg-8 right-column">
+                <!-- Score Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="score-card animate-slide-up" style="animation-delay: 0.1s;">
+                            <div class="score-value" id="overallScoreBadge">0%</div>
+                            <div class="score-label">Compatibility Score</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="score-card animate-slide-up" style="animation-delay: 0.2s; background: linear-gradient(135deg, var(--success-color), #10B981);">
+                            <div class="score-value" id="jobDescScoreBadge">0%</div>
+                            <div class="score-label">Experience Match</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="score-card animate-slide-up" style="animation-delay: 0.3s; background: linear-gradient(135deg, #F59E0B, #D97706);">
+                            <div class="score-value" id="skillsScoreBadge">0%</div>
+                            <div class="score-label">Technical Fit</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row mb-4">
+                    <div class="col-lg-6 mb-4">
+                        <div class="card animate-fade-in">
+                            <div class="card-body">
+                                <h6 class="card-title fw-semibold mb-3">
+                                    <i class="bi bi-bar-chart me-2 text-primary"></i>Score Breakdown
+                                </h6>
+                                <div class="chart-container">
+                                    <canvas id="scoreChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="card animate-fade-in">
+                            <div class="card-body">
+                                <h6 class="card-title fw-semibold mb-3">
+                                    <i class="bi bi-pie-chart me-2 text-primary"></i>Match Distribution
+                                </h6>
+                                <div class="chart-container">
+                                    <canvas id="pieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resume Analysis -->
+                <div class="card mb-4 animate-fade-in resume-analysis-card">
+                    <div class="card-header bg-gradient text-white">
+                        <h5 class="mb-0 d-flex align-items-center">
+                            <i class="bi bi-file-person me-3 fs-4"></i>
+                            <span>Resume Analysis</span>
+                            <div class="ms-auto">
+                                <button class="btn btn-outline-light btn-sm" onclick="toggleResumeView()">
+                                    <i class="bi bi-arrows-expand" id="resumeToggleIcon"></i>
+                                </button>
+                            </div>
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="resumeAnalysis">
+                            <!-- Education Section -->
+                            <div class="resume-section" data-section="education">
+                                <div class="resume-section-header" onclick="toggleSection('education')">
+                                    <div class="d-flex align-items-center">
+                                        <div class="section-icon education-icon">
+                                            <i class="bi bi-mortarboard"></i>
+                                        </div>
+                                        <div class="section-info">
+                                            <h6 class="section-title mb-1">Education</h6>
+                                            <small class="section-subtitle">Academic Background</small>
+                                        </div>
+                                    </div>
+                                    <div class="section-toggle">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="resume-section-content" id="educationContent">
+                                    <div class="content-placeholder">
+                                        <div class="placeholder-animation"></div>
+                                        <span>Loading education details...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Experience Section -->
+                            <div class="resume-section" data-section="experience">
+                                <div class="resume-section-header" onclick="toggleSection('experience')">
+                                    <div class="d-flex align-items-center">
+                                        <div class="section-icon experience-icon">
+                                            <i class="bi bi-briefcase"></i>
+                                        </div>
+                                        <div class="section-info">
+                                            <h6 class="section-title mb-1">Experience</h6>
+                                            <small class="section-subtitle">Professional Background</small>
+                                        </div>
+                                    </div>
+                                    <div class="section-toggle">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="resume-section-content" id="experienceContent">
+                                    <div class="content-placeholder">
+                                        <div class="placeholder-animation"></div>
+                                        <span>Loading experience details...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Skills Section -->
+                            <div class="resume-section" data-section="skills">
+                                <div class="resume-section-header" onclick="toggleSection('skills')">
+                                    <div class="d-flex align-items-center">
+                                        <div class="section-icon skills-icon">
+                                            <i class="bi bi-code-slash"></i>
+                                        </div>
+                                        <div class="section-info">
+                                            <h6 class="section-title mb-1">Skills</h6>
+                                            <small class="section-subtitle">Technical Competencies</small>
+                                        </div>
+                                    </div>
+                                    <div class="section-toggle">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="resume-section-content" id="skillsContent">
+                                    <div class="content-placeholder">
+                                        <div class="placeholder-animation"></div>
+                                        <span>Loading skills details...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Projects Section -->
+                            <div class="resume-section" data-section="projects">
+                                <div class="resume-section-header" onclick="toggleSection('projects')">
+                                    <div class="d-flex align-items-center">
+                                        <div class="section-icon projects-icon">
+                                            <i class="bi bi-folder"></i>
+                                        </div>
+                                        <div class="section-info">
+                                            <h6 class="section-title mb-1">Projects</h6>
+                                            <small class="section-subtitle">Portfolio & Achievements</small>
+                                        </div>
+                                    </div>
+                                    <div class="section-toggle">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="resume-section-content" id="projectsContent">
+                                    <div class="content-placeholder">
+                                        <div class="placeholder-animation"></div>
+                                        <span>Loading projects details...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Job Recommendations -->
+                <div class="card animate-fade-in job-recommendations-card">
+                    <div class="card-header recommendations-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="header-content">
+                                <h5 class="mb-1 text-white">
+                                    <i class="bi bi-briefcase me-2"></i>Job Recommendations
+                                </h5>
+                                <p class="mb-0 text-white-50">Based on your profile analysis</p>
+                            </div>
+                            <div class="recommendation-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">5</div>
+                                    <div class="stat-label">Jobs Found</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="jobRecommendations" class="job-recommendations-list">
+                            <!-- Job Recommendation Items -->
+                            <div class="job-recommendation-item">
+                                <div class="job-item-header">
+                                    <div class="company-logo">
+                                        <i class="bi bi-microsoft"></i>
+                                    </div>
+                                    <div class="job-details">
+                                        <h6 class="job-title">Senior Software Engineer</h6>
+                                        <div class="job-company">Microsoft</div>
+                                        <div class="job-location">
+                                            <i class="bi bi-geo-alt me-1"></i>Seattle, WA
+                                        </div>
+                                    </div>
+                                    <div class="job-match-score">
+                                        <div class="match-percentage">92%</div>
+                                        <div class="match-label">Match</div>
+                                    </div>
+                                </div>
+                                <div class="job-item-content">
+                                    <div class="job-tags">
+                                        <span class="job-tag">JavaScript</span>
+                                        <span class="job-tag">React</span>
+                                        <span class="job-tag">Node.js</span>
+                                        <span class="job-tag">+3 more</span>
+                                    </div>
+                                    <div class="job-meta-info">
+                                        <span class="salary-range">
+                                            <i class="bi bi-currency-dollar me-1"></i>$120k - $180k
+                                        </span>
+                                        <span class="job-posted">
+                                            <i class="bi bi-clock me-1"></i>2 days ago
+                                        </span>
+                                        <span class="job-applicants">
+                                            <i class="bi bi-people me-1"></i>45 applicants
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="job-item-actions">
+                                    <button class="btn btn-primary btn-sm apply-btn">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>Apply Now
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm save-btn">
+                                        <i class="bi bi-bookmark me-1"></i>Save
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm details-btn">
+                                        <i class="bi bi-info-circle me-1"></i>Details
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="job-recommendation-item">
+                                <div class="job-item-header">
+                                    <div class="company-logo google">
+                                        <i class="bi bi-google"></i>
+                                    </div>
+                                    <div class="job-details">
+                                        <h6 class="job-title">Full Stack Developer</h6>
+                                        <div class="job-company">Google</div>
+                                        <div class="job-location">
+                                            <i class="bi bi-geo-alt me-1"></i>Mountain View, CA
+                                        </div>
+                                    </div>
+                                    <div class="job-match-score">
+                                        <div class="match-percentage">88%</div>
+                                        <div class="match-label">Match</div>
+                                    </div>
+                                </div>
+                                <div class="job-item-content">
+                                    <div class="job-tags">
+                                        <span class="job-tag">Python</span>
+                                        <span class="job-tag">Django</span>
+                                        <span class="job-tag">PostgreSQL</span>
+                                        <span class="job-tag">+2 more</span>
+                                    </div>
+                                    <div class="job-meta-info">
+                                        <span class="salary-range">
+                                            <i class="bi bi-currency-dollar me-1"></i>$140k - $200k
+                                        </span>
+                                        <span class="job-posted">
+                                            <i class="bi bi-clock me-1"></i>1 week ago
+                                        </span>
+                                        <span class="job-applicants">
+                                            <i class="bi bi-people me-1"></i>78 applicants
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="job-item-actions">
+                                    <button class="btn btn-primary btn-sm apply-btn">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>Apply Now
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm save-btn">
+                                        <i class="bi bi-bookmark me-1"></i>Save
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm details-btn">
+                                        <i class="bi bi-info-circle me-1"></i>Details
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="job-recommendation-item">
+                                <div class="job-item-header">
+                                    <div class="company-logo amazon">
+                                        <i class="bi bi-amazon"></i>
+                                    </div>
+                                    <div class="job-details">
+                                        <h6 class="job-title">Software Development Engineer</h6>
+                                        <div class="job-company">Amazon</div>
+                                        <div class="job-location">
+                                            <i class="bi bi-geo-alt me-1"></i>Austin, TX
+                                        </div>
+                                    </div>
+                                    <div class="job-match-score">
+                                        <div class="match-percentage">85%</div>
+                                        <div class="match-label">Match</div>
+                                    </div>
+                                </div>
+                                <div class="job-item-content">
+                                    <div class="job-tags">
+                                        <span class="job-tag">Java</span>
+                                        <span class="job-tag">AWS</span>
+                                        <span class="job-tag">Microservices</span>
+                                        <span class="job-tag">+4 more</span>
+                                    </div>
+                                    <div class="job-meta-info">
+                                        <span class="salary-range">
+                                            <i class="bi bi-currency-dollar me-1"></i>$110k - $160k
+                                        </span>
+                                        <span class="job-posted">
+                                            <i class="bi bi-clock me-1"></i>3 days ago
+                                        </span>
+                                        <span class="job-applicants">
+                                            <i class="bi bi-people me-1"></i>32 applicants
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="job-item-actions">
+                                    <button class="btn btn-primary btn-sm apply-btn">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>Apply Now
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm save-btn">
+                                        <i class="bi bi-bookmark me-1"></i>Save
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm details-btn">
+                                        <i class="bi bi-info-circle me-1"></i>Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendations-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">Showing 3 of 5 recommendations</span>
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-arrow-right me-1"></i>View All Jobs
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced AI Suggestions Panel -->
+                <div class="card mt-4 animate-fade-in ai-suggestions-panel">
+                    <div class="card-header ai-suggestions-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="header-content">
+                                <h5 class="mb-1 text-white">
+                                    <i class="bi bi-robot me-2"></i>AI-Powered Insights
+                                </h5>
+                                <p class="mb-0 text-white-50">Personalized recommendations to improve your profile</p>
+                            </div>
+                            <div class="ai-badge">
+                                <i class="bi bi-cpu"></i>
+                                <span>AI</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="suggestions-container">
+                            <!-- Strengths Section -->
+                            <div class="suggestion-category strengths">
+                                <div class="category-header">
+                                    <div class="category-icon success">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+                                    <div class="category-info">
+                                        <h6 class="category-title">Your Strengths</h6>
+                                        <p class="category-subtitle">What makes you stand out</p>
+                                    </div>
+                                    <div class="category-count">3</div>
+                                </div>
+                                <div class="suggestions-list">
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-icon">
+                                            <i class="bi bi-code-slash"></i>
+                                        </div>
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">Strong Technical Foundation</div>
+                                            <div class="suggestion-description">Your experience in JavaScript, Python, and React demonstrates solid full-stack capabilities that align perfectly with modern development roles.</div>
+                                            <div class="suggestion-actions">
+                                                <button class="btn btn-sm btn-outline-success" onclick="openLearningResource('fullstack-advanced')">
+                                                    <i class="bi bi-arrow-up-circle me-1"></i>Level Up Skills
+                                                </button>
+                                            </div>
+                                            <div class="suggestion-impact">
+                                                <span class="impact-label">Impact:</span>
+                                                <span class="impact-value high">High</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-icon">
+                                            <i class="bi bi-trophy"></i>
+                                        </div>
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">Project Portfolio</div>
+                                            <div class="suggestion-description">Your healthcare management system and restaurant website projects showcase practical application of technical skills and problem-solving abilities.</div>
+                                            <div class="suggestion-impact">
+                                                <span class="impact-label">Impact:</span>
+                                                <span class="impact-value high">High</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-icon">
+                                            <i class="bi bi-mortarboard"></i>
+                                        </div>
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">Educational Background</div>
+                                            <div class="suggestion-description">Your B.Tech in Information Technology with strong academic performance (CGPA: 7.7) provides a solid foundation for technical roles.</div>
+                                            <div class="suggestion-impact">
+                                                <span class="impact-label">Impact:</span>
+                                                <span class="impact-value medium">Medium</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Improvements Section -->
+                            <div class="suggestion-category improvements">
+                                <div class="category-header">
+                                    <div class="category-icon warning">
+                                        <i class="bi bi-arrow-up-circle-fill"></i>
+                                    </div>
+                                    <div class="category-info">
+                                        <h6 class="category-title">Areas for Improvement</h6>
+                                        <p class="category-subtitle">Skills to boost your profile</p>
+                                    </div>
+                                    <div class="category-count">2</div>
+                                </div>
+                                <div class="suggestions-list">
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-icon">
+                                            <i class="bi bi-cloud"></i>
+                                        </div>
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">Cloud Computing Skills</div>
+                                            <div class="suggestion-description">Adding AWS, Azure, or Google Cloud certifications would significantly enhance your profile for modern development roles.</div>
+                                            <div class="suggestion-actions">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="openLearningResource('aws-learn')">
+                                                    <i class="bi bi-book me-1"></i>Learn AWS
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="openLearningResource('aws-cert')">
+                                                    <i class="bi bi-award me-1"></i>Get Certified
+                                                </button>
+                                            </div>
+                                            <div class="suggestion-impact">
+                                                <span class="impact-label">Impact:</span>
+                                                <span class="impact-value high">High</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-icon">
+                                            <i class="bi bi-container"></i>
+                                        </div>
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">DevOps & Containerization</div>
+                                            <div class="suggestion-description">Docker, Kubernetes, and CI/CD pipeline experience are highly valued in current job market.</div>
+                                            <div class="suggestion-actions">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="openLearningResource('devops-learn')">
+                                                    <i class="bi bi-play-circle me-1"></i>Start Learning
+                                                </button>
+                                            </div>
+                                            <div class="suggestion-impact">
+                                                <span class="impact-label">Impact:</span>
+                                                <span class="impact-value medium">Medium</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Items Section -->
+                            <div class="suggestion-category actions">
+                                <div class="category-header">
+                                    <div class="category-icon info">
+                                        <i class="bi bi-lightning-fill"></i>
+                                    </div>
+                                    <div class="category-info">
+                                        <h6 class="category-title">Immediate Actions</h6>
+                                        <p class="category-subtitle">Quick wins to improve your chances</p>
+                                    </div>
+                                    <div class="category-count">3</div>
+                                </div>
+                                <div class="suggestions-list">
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">Update Resume Keywords</div>
+                                            <div class="suggestion-description">Include "cloud computing", "microservices", and "agile development" to match job requirements better.</div>
+                                            <div class="suggestion-priority">
+                                                <span class="priority-label">Priority:</span>
+                                                <span class="priority-value high">High</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">Quantify Achievements</div>
+                                            <div class="suggestion-description">Add metrics to your project descriptions (e.g., "improved performance by 30%", "reduced load time by 2 seconds").</div>
+                                            <div class="suggestion-priority">
+                                                <span class="priority-label">Priority:</span>
+                                                <span class="priority-value medium">Medium</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="suggestion-item">
+                                        <div class="suggestion-content">
+                                            <div class="suggestion-title">LinkedIn Optimization</div>
+                                            <div class="suggestion-description">Update your LinkedIn profile with the same keywords and showcase your projects with screenshots.</div>
+                                            <div class="suggestion-priority">
+                                                <span class="priority-label">Priority:</span>
+                                                <span class="priority-value medium">Medium</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="suggestions-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="ai-powered-by">
+                                    <i class="bi bi-robot me-1"></i>
+                                    <span class="small text-muted">Powered by CareerBERT AI</span>
+                                </div>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="bi bi-download me-1"></i>Export Action Plan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-bs-theme');
+            
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-bs-theme', 'light');
+                themeIcon.className = 'bi bi-moon-fill';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeIcon.className = 'bi bi-sun-fill';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            html.setAttribute('data-bs-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        });
+        
+        // Download report functionality
+        function downloadReport() {
+            // Show loading state
+            const downloadBtns = document.querySelectorAll('[onclick="downloadReport()"]');
+            downloadBtns.forEach(btn => {
+                btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Generating...';
+                btn.disabled = true;
+            });
+            
+            // Call the server endpoint to generate PDF
+            fetch('/download-report')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to generate report');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    
+                    // Get filename from response headers or use default
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                    a.download = `CareerBERT_Report_${timestamp}.pdf`;
+                    
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    // Show success message
+                    showAlert('Report downloaded successfully!', 'success');
+                })
+                .catch(error => {
+                    console.error('Error downloading report:', error);
+                    showAlert('Failed to generate report. Please try again.', 'danger');
+                })
+                .finally(() => {
+                    // Reset button state
+                    downloadBtns.forEach(btn => {
+                        btn.innerHTML = '<i class="bi bi-download me-2"></i>Download Report';
+                        btn.disabled = false;
+                    });
+                });
+        }
+        
+        // Alert function for download feedback
+        function showAlert(message, type) {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            // Create new alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 100px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Resume Analysis Interactive Functions
+        function toggleSection(sectionName) {
+            const section = document.querySelector(`[data-section="${sectionName}"]`);
+            if (section) {
+                section.classList.toggle('collapsed');
+            }
+        }
+        
+        function toggleResumeView() {
+            const resumeCard = document.querySelector('.resume-analysis-card');
+            const toggleIcon = document.getElementById('resumeToggleIcon');
+            
+            if (document.querySelector('.resume-expanded')) {
+                // Exit expanded view
+                document.body.classList.remove('resume-expanded');
+                const expandedDiv = document.querySelector('.resume-expanded');
+                if (expandedDiv) {
+                    const originalParent = expandedDiv.getAttribute('data-original-parent');
+                    const parentElement = document.querySelector(originalParent) || document.querySelector('.col-lg-8');
+                    parentElement.appendChild(resumeCard);
+                    expandedDiv.remove();
+                }
+                toggleIcon.className = 'bi bi-arrows-expand';
+            } else {
+                // Enter expanded view
+                const expandedDiv = document.createElement('div');
+                expandedDiv.className = 'resume-expanded';
+                expandedDiv.setAttribute('data-original-parent', '.col-lg-8');
+                
+                // Add close functionality
+                expandedDiv.addEventListener('click', function(e) {
+                    if (e.target === expandedDiv) {
+                        toggleResumeView();
+                    }
+                });
+                
+                expandedDiv.appendChild(resumeCard);
+                document.body.appendChild(expandedDiv);
+                document.body.classList.add('resume-expanded');
+                toggleIcon.className = 'bi bi-arrows-collapse';
+            }
+        }
+        
+        // Enhanced content loading with better formatting
+        function formatResumeContent(content, sectionType) {
+            if (!content || content === "Section not found." || content.trim() === "") {
+                return `<div class="content-placeholder">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <span>No ${sectionType.toLowerCase()} information available</span>
+                </div>`;
+            }
+            
+            let formattedContent = `<div class="resume-content">`;
+            
+            if (sectionType === 'Skills') {
+                // Format skills as tags
+                const skills = content.split(/[,\n]/).map(s => s.trim()).filter(s => s.length > 0);
+                if (skills.length > 0) {
+                    formattedContent += `<div class="skill-tags">`;
+                    skills.forEach(skill => {
+                        formattedContent += `<span class="skill-tag">${skill}</span>`;
+                    });
+                    formattedContent += `</div>`;
+                } else {
+                    formattedContent += `<p>${content}</p>`;
+                }
+            } else {
+                // Format other sections as structured text
+                const paragraphs = content.split('\n').filter(p => p.trim().length > 0);
+                paragraphs.forEach(paragraph => {
+                    formattedContent += `<p>${paragraph.trim()}</p>`;
+                });
+            }
+            
+            formattedContent += `</div>`;
+            return formattedContent;
+        }
+        
+        // Global variables for job description
+        let fullJobDescription = '';
+        let isJobDescriptionExpanded = false;
+        
+        // Toggle job description function
+        function toggleJobDescription() {
+            const preview = document.getElementById('jobDescriptionPreview');
+            const btn = document.getElementById('showMoreBtn');
+            const icon = document.getElementById('showMoreIcon');
+            
+            if (!preview || !btn || !icon) return;
+            
+            if (isJobDescriptionExpanded) {
+                // Collapse
+                preview.textContent = fullJobDescription.length > 150 ? 
+                    fullJobDescription.substring(0, 150) + '...' : fullJobDescription;
+                btn.innerHTML = '<i class="bi bi-chevron-down me-1"></i>Show more';
+                isJobDescriptionExpanded = false;
+            } else {
+                // Expand
+                preview.textContent = fullJobDescription;
+                btn.innerHTML = '<i class="bi bi-chevron-up me-1"></i>Show less';
+                isJobDescriptionExpanded = true;
+            }
+        }
+        
+        // Load actual results data
+        async function loadActualResults() {
+            try {
+                const response = await fetch('/results');
+                const data = await response.json();
+                
+                console.log('Loaded actual results:', data);
+                
+                // Update overall match scores
+                updateElement('overallScoreBadge', data.overall + '%');
+                updateElement('overallMatchScore', data.overall + '%');
+                updateElement('overallMatchPercentage', data.overall + '%');
+                updateProgressBar('overallMatchProgress', data.overall);
+                
+                // Update job match scores
+                updateElement('jobDescScoreBadge', data.job_match + '%');
+                updateElement('jobMatchPercentage', data.job_match + '%');
+                updateProgressBar('jobMatchProgress', data.job_match);
+                
+                // Update skills match scores
+                updateElement('skillsScoreBadge', data.skills_match + '%');
+                updateElement('skillsMatchPercentage', data.skills_match + '%');
+                updateProgressBar('skillsMatchProgress', data.skills_match);
+                
+                // For the breakdown section, we'll use the same values since we don't have separate education scores
+                updateElement('experienceScore', `Experience: ${data.job_match}%`);
+                updateElement('skillsScore', `Skills: ${data.skills_match}%`);
+                updateElement('educationScore', `Education: ${Math.min(data.overall + 10, 100)}%`); // Estimate
+                
+                // Update job description
+                if (data.job_text) {
+                    fullJobDescription = data.job_text;
+                    const preview = document.getElementById('jobDescriptionPreview');
+                    if (preview) {
+                        preview.textContent = data.job_text.length > 150 ? 
+                            data.job_text.substring(0, 150) + '...' : data.job_text;
+                    }
+                    
+                    // Show the "Show more" button only if text is long enough
+                    const showMoreBtn = document.getElementById('showMoreBtn');
+                    if (showMoreBtn) {
+                        showMoreBtn.style.display = data.job_text.length > 150 ? 'inline-block' : 'none';
+                    }
+                }
+                
+                // Update skill gap analysis
+                updateSkillGapAnalysis(data);
+                
+                // Update resume sections
+                if (data.resume_sections) {
+                    renderResumeSections(data.resume_sections);
+                }
+                
+                // Update job recommendations
+                if (data.recommendations) {
+                    renderRecommendations(data.recommendations);
+                }
+                
+            } catch (error) {
+                console.error('Error loading actual results:', error);
+                // Show error message
+                const skillGapTags = document.getElementById('skillGapTags');
+                if (skillGapTags) {
+                    skillGapTags.innerHTML = '<div class="text-danger small">Error loading skill analysis. Please refresh the page.</div>';
+                }
+            }
+        }
+        
+        // Helper function to update element content
+        function updateElement(id, content) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = content;
+            }
+        }
+        
+        // Helper function to update progress bars
+        function updateProgressBar(id, percentage) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.width = percentage + '%';
+                // Update color based on score
+                element.className = element.className.replace(/bg-\w+/, '');
+                if (percentage >= 70) {
+                    element.classList.add('bg-success');
+                } else if (percentage >= 50) {
+                    element.classList.add('bg-warning');
+                } else {
+                    element.classList.add('bg-danger');
+                }
+            }
+        }
+        
+        // Update skill gap analysis with actual data
+        function updateSkillGapAnalysis(data) {
+            const skillGapTags = document.getElementById('skillGapTags');
+            if (!skillGapTags) return;
+            
+            let skillsHtml = '';
+            
+            // Extract skills from resume sections
+            const resumeSkills = [];
+            if (data.resume_sections && data.resume_sections.skills) {
+                const skillsText = data.resume_sections.skills;
+                if (skillsText && skillsText !== "Section not found.") {
+                    // Parse skills from text
+                    const skills = skillsText.split(/[,\n•]/).map(s => s.trim()).filter(s => s.length > 2);
+                    resumeSkills.push(...skills.slice(0, 10)); // Limit to 10 skills
+                }
+            }
+            
+            // Add matched skills (from resume)
+            if (resumeSkills.length > 0) {
+                resumeSkills.forEach(skill => {
+                    skillsHtml += `<div class="skill-tag skill-matched">
+                        <i class="bi bi-check-circle me-1"></i>${skill}
+                    </div>`;
+                });
+            }
+            
+            // Add missing skills (from the missing_skills array)
+            if (data.missing_skills && Array.isArray(data.missing_skills)) {
+                data.missing_skills.forEach(skill => {
+                    skillsHtml += `<div class="skill-tag skill-missing">
+                        <i class="bi bi-x-circle me-1"></i>${skill}
+                    </div>`;
+                });
+            }
+            
+            // Add some recommended skills based on job description
+            const recommendedSkills = ['Docker', 'Kubernetes', 'CI/CD', 'Microservices', 'Cloud Computing'];
+            recommendedSkills.slice(0, 3).forEach(skill => {
+                skillsHtml += `<div class="skill-tag skill-recommended">
+                    <i class="bi bi-plus-circle me-1"></i>${skill}
+                </div>`;
+            });
+            
+            if (skillsHtml) {
+                skillGapTags.innerHTML = skillsHtml;
+            } else {
+                skillGapTags.innerHTML = '<div class="text-muted small">No skill analysis available</div>';
+            }
+        }
+        
+        // Initialize resume sections on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for section expansion
+            document.querySelectorAll('.resume-section-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const section = this.closest('.resume-section');
+                    section.classList.toggle('collapsed');
+                });
+            });
+            
+            // Initialize all sections as expanded by default
+            document.querySelectorAll('.resume-section').forEach(section => {
+                section.classList.remove('collapsed');
+            });
+            
+            // Load actual results data
+            loadActualResults();
+            
+            // Fix scrolling behavior
+            initializeSmoothScrolling();
+        });
+        
+        // Initialize smooth scrolling behavior
+        function initializeSmoothScrolling() {
+            const leftColumn = document.querySelector('.left-column');
+            const rightColumn = document.querySelector('.right-column');
+            
+            if (!leftColumn || !rightColumn) return;
+            
+            // Add smooth scrolling behavior
+            let isScrolling = false;
+            
+            // Throttle scroll events for better performance
+            function throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                }
+            }
+            
+            // Sync scroll positions when needed
+            const syncScroll = throttle(function() {
+                if (isScrolling) return;
+                
+                // Get scroll positions
+                const windowScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const leftScrollTop = leftColumn.scrollTop;
+                
+                // If user is scrolling the main page and left column is at bottom, allow main scroll
+                const leftAtBottom = leftColumn.scrollTop >= (leftColumn.scrollHeight - leftColumn.clientHeight - 10);
+                const leftAtTop = leftColumn.scrollTop <= 10;
+                
+                // Improve scroll behavior
+                if (windowScrollTop > 100 && !leftAtBottom && !leftAtTop) {
+                    // Prevent body scroll when left column can still scroll
+                    if (event.target === document || event.target === document.documentElement || event.target === document.body) {
+                        // Allow natural scrolling
+                    }
+                }
+            }, 16);
+            
+            // Add scroll listeners
+            window.addEventListener('scroll', syncScroll, { passive: true });
+            leftColumn.addEventListener('scroll', syncScroll, { passive: true });
+            
+            // Add smooth transitions
+            leftColumn.style.transition = 'all 0.3s ease';
+            rightColumn.style.transition = 'all 0.3s ease';
+        }
+        
+        // Handle learning resource clicks
+        function openLearningResource(resourceType) {
+            const resources = {
+                'aws-learn': {
+                    title: 'AWS Learning Resources',
+                    links: [
+                        { name: 'AWS Free Tier', url: 'https://aws.amazon.com/free/' },
+                        { name: 'AWS Training and Certification', url: 'https://aws.amazon.com/training/' },
+                        { name: 'AWS Educate', url: 'https://aws.amazon.com/education/awseducate/' },
+                        { name: 'AWS Documentation', url: 'https://docs.aws.amazon.com/' }
+                    ]
+                },
+                'aws-cert': {
+                    title: 'AWS Certification Paths',
+                    links: [
+                        { name: 'AWS Cloud Practitioner', url: 'https://aws.amazon.com/certification/certified-cloud-practitioner/' },
+                        { name: 'AWS Solutions Architect', url: 'https://aws.amazon.com/certification/certified-solutions-architect-associate/' },
+                        { name: 'AWS Developer Associate', url: 'https://aws.amazon.com/certification/certified-developer-associate/' },
+                        { name: 'All AWS Certifications', url: 'https://aws.amazon.com/certification/' }
+                    ]
+                },
+                'devops-learn': {
+                    title: 'DevOps Learning Resources',
+                    links: [
+                        { name: 'Docker Getting Started', url: 'https://docs.docker.com/get-started/' },
+                        { name: 'Kubernetes Basics', url: 'https://kubernetes.io/docs/tutorials/kubernetes-basics/' },
+                        { name: 'GitHub Actions CI/CD', url: 'https://docs.github.com/en/actions' },
+                        { name: 'DevOps Roadmap', url: 'https://roadmap.sh/devops' }
+                    ]
+                },
+                'fullstack-advanced': {
+                    title: 'Advanced Full-Stack Development',
+                    links: [
+                        { name: 'Advanced React Patterns', url: 'https://react.dev/learn' },
+                        { name: 'Node.js Best Practices', url: 'https://nodejs.org/en/docs/guides' },
+                        { name: 'System Design Primer', url: 'https://github.com/donnemartin/system-design-primer' },
+                        { name: 'Full-Stack Roadmap', url: 'https://roadmap.sh/full-stack' }
+                    ]
+                }
+            };
+            
+            const resource = resources[resourceType];
+            if (!resource) return;
+            
+            // Create modal content
+            const modalContent = `
+                <div class="learning-modal">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-mortarboard me-2"></i>${resource.title}
+                        </h5>
+                        <button type="button" class="btn-close" onclick="closeLearningModal()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-3">Choose from these curated learning resources:</p>
+                        <div class="learning-links">
+                            ${resource.links.map(link => `
+                                <a href="${link.url}" target="_blank" class="learning-link">
+                                    <i class="bi bi-box-arrow-up-right me-2"></i>
+                                    <span>${link.name}</span>
+                                </a>
+                            `).join('')}
+                        </div>
+                        <div class="mt-3 text-muted small">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Links will open in new tabs
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Create modal overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'learning-modal-overlay';
+            overlay.innerHTML = modalContent;
+            overlay.onclick = function(e) {
+                if (e.target === overlay) closeLearningModal();
+            };
+            
+            document.body.appendChild(overlay);
+            
+            // Add modal styles if not already added
+            if (!document.getElementById('learning-modal-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'learning-modal-styles';
+                styles.textContent = `
+                    .learning-modal-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10000;
+                        animation: fadeIn 0.3s ease;
+                    }
+                    
+                    .learning-modal {
+                        background: white;
+                        border-radius: 16px;
+                        max-width: 500px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                        animation: slideUp 0.3s ease;
+                    }
+                    
+                    [data-bs-theme="dark"] .learning-modal {
+                        background: #1F2937;
+                        color: #F9FAFB;
+                    }
+                    
+                    .modal-header {
+                        padding: 1.5rem;
+                        border-bottom: 1px solid #E5E7EB;
+                        display: flex;
+                        align-items: center;
+                        justify-content: between;
+                    }
+                    
+                    [data-bs-theme="dark"] .modal-header {
+                        border-bottom-color: #374151;
+                    }
+                    
+                    .modal-title {
+                        margin: 0;
+                        flex: 1;
+                        color: #1F2937;
+                        font-weight: 600;
+                    }
+                    
+                    [data-bs-theme="dark"] .modal-title {
+                        color: #F9FAFB;
+                    }
+                    
+                    .btn-close {
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: #6B7280;
+                        padding: 0;
+                        width: 24px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    
+                    .btn-close:hover {
+                        color: #374151;
+                    }
+                    
+                    .btn-close::before {
+                        content: "×";
+                    }
+                    
+                    .modal-body {
+                        padding: 1.5rem;
+                    }
+                    
+                    .learning-links {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.75rem;
+                    }
+                    
+                    .learning-link {
+                        display: flex;
+                        align-items: center;
+                        padding: 0.75rem 1rem;
+                        background: #F9FAFB;
+                        border: 1px solid #E5E7EB;
+                        border-radius: 8px;
+                        text-decoration: none;
+                        color: #374151;
+                        transition: all 0.2s ease;
+                    }
+                    
+                    .learning-link:hover {
+                        background: #F3F4F6;
+                        border-color: var(--primary-color);
+                        color: var(--primary-color);
+                        text-decoration: none;
+                        transform: translateX(4px);
+                    }
+                    
+                    [data-bs-theme="dark"] .learning-link {
+                        background: #374151;
+                        border-color: #4B5563;
+                        color: #E5E7EB;
+                    }
+                    
+                    [data-bs-theme="dark"] .learning-link:hover {
+                        background: #4B5563;
+                        color: var(--primary-color);
+                    }
+                    
+                    @keyframes slideUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(30px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                    
+                    @keyframes fadeOut {
+                        from {
+                            opacity: 1;
+                        }
+                        to {
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+        }
+        
+        // Close learning modal
+        function closeLearningModal() {
+            const overlay = document.querySelector('.learning-modal-overlay');
+            if (overlay) {
+                overlay.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => {
+                    overlay.remove();
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>

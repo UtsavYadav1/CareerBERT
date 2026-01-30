@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - CareerBERT</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --bg-color: #F8FAFC;
+            --primary-color: #2563EB;
+            --secondary-color: #9333EA;
+            --success-color: #16A34A;
+            --danger-color: #DC2626;
+            --dark-bg: #0F172A;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bg-color: #0F172A;
+            --bs-body-bg: #0F172A;
+            --bs-body-color: #E2E8F0;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
+        }
+        
+        [data-bs-theme="dark"] .navbar {
+            background: rgba(15, 23, 42, 0.95) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #64748B !important;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: var(--card-shadow);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control {
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #1D4ED8;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -3px rgba(37, 99, 235, 0.3);
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #64748B;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: #F1F5F9;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle {
+            border-color: #334155;
+            color: #94A3B8;
+        }
+        
+        [data-bs-theme="dark"] .theme-toggle:hover {
+            background: #1E293B;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* Contact Hero Section */
+        .contact-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 6rem 0 4rem;
+            margin-top: 76px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .contact-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .contact-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #FFD700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        /* Contact Illustration */
+        .hero-visual {
+            position: relative;
+            height: 400px;
+        }
+        
+        .contact-illustration {
+            position: relative;
+            height: 100%;
+        }
+        
+        .support-bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: bubbleFloat 3s ease-in-out infinite;
+            font-weight: 500;
+            color: #1F2937;
+        }
+        
+        [data-bs-theme="dark"] .support-bubble {
+            background: rgba(15, 23, 42, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #F9FAFB;
+        }
+        
+        .support-bubble i {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+        
+        .support-bubble.bubble-1 {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .support-bubble.bubble-2 {
+            top: 40%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+        
+        .support-bubble.bubble-3 {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+        
+        @keyframes bubbleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Contact Methods Section */
+        .contact-methods {
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+        }
+        
+        [data-bs-theme="dark"] .contact-methods {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+        }
+        
+        .contact-method-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+        }
+        
+        [data-bs-theme="dark"] .contact-method-card {
+            background: #1F2937;
+            border-color: #374151;
+        }
+        
+        .contact-method-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .contact-method-card.featured {
+            border: 2px solid var(--primary-color);
+            transform: scale(1.05);
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .method-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .method-icon.email {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        }
+        
+        .method-icon.chat {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+        
+        .method-icon.docs {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+        
+        .method-title {
+            color: #1F2937;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        [data-bs-theme="dark"] .method-title {
+            color: #F9FAFB;
+        }
+        
+        .method-description {
+            color: #6B7280;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        [data-bs-theme="dark"] .method-description {
+            color: #D1D5DB;
+        }
+        
+        .method-info {
+            margin-bottom: 2rem;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        [data-bs-theme="dark"] .info-item {
+            border-color: #374151;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #6B7280;
+        }
+        
+        [data-bs-theme="dark"] .info-label {
+            color: #9CA3AF;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #1F2937;
+        }
+        
+        [data-bs-theme="dark"] .info-value {
+            color: #F9FAFB;
+        }
+        
+        .btn-method {
+            background: #F3F4F6;
+            border: 2px solid #E5E7EB;
+            color: #374151;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        [data-bs-theme="dark"] .btn-method {
+            background: #374151;
+            border-color: #4B5563;
+            color: #E5E7EB;
+        }
+        
+        .btn-method:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-method.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-method.primary:hover {
+            background: linear-gradient(135deg, #1D4ED8, #7C3AED);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+        
+        /* Contact Form Section */
+        .contact-form-section {
+            background: white;
+        }
+        
+        [data-bs-theme="dark"] .contact-form-section {
+            background: #0F172A;
+        }
+        
+        .contact-form-header h2 {
+            color: #1F2937;
+        }
+        
+        [data-bs-theme="dark"] .contact-form-header h2 {
+            color: #F9FAFB;
+        }
+        
+        .contact-form-card {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            padding: 2.5rem;
+        }
+        
+        [data-bs-theme="dark"] .contact-form-card {
+            background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+            border-color: #475569;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        [data-bs-theme="dark"] .form-section {
+            border-color: #374151;
+        }
+        
+        .form-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .form-section-title {
+            color: #1F2937;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        [data-bs-theme="dark"] .form-section-title {
+            color: #F9FAFB;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        [data-bs-theme="dark"] .form-label {
+            color: #E5E7EB;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 1px solid #D1D5DB;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        
+        [data-bs-theme="dark"] .form-control,
+        [data-bs-theme="dark"] .form-select {
+            background: #374151;
+            border-color: #4B5563;
+            color: #F9FAFB;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .form-text {
+            font-size: 0.875rem;
+            color: #6B7280;
+            margin-top: 0.5rem;
+        }
+        
+        [data-bs-theme="dark"] .form-text {
+            color: #9CA3AF;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-contact-submit {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-contact-submit:hover {
+            background: linear-gradient(135deg, #1D4ED8, #7C3AED);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+            color: white;
+        }
+        
+        /* Contact Sidebar */
+        .contact-sidebar {
+            padding-left: 2rem;
+        }
+        
+        .sidebar-card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        [data-bs-theme="dark"] .sidebar-card {
+            background: #1F2937;
+            border-color: #374151;
+        }
+        
+        .sidebar-title {
+            color: #1F2937;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        [data-bs-theme="dark"] .sidebar-title {
+            color: #F9FAFB;
+        }
+        
+        .response-times {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .response-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+        
+        .response-type {
+            font-weight: 500;
+            color: #4B5563;
+        }
+        
+        [data-bs-theme="dark"] .response-type {
+            color: #D1D5DB;
+        }
+        
+        .response-time {
+            font-weight: 600;
+            color: var(--success-color);
+            font-size: 0.875rem;
+        }
+        
+        .quick-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .quick-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            color: #4B5563;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        [data-bs-theme="dark"] .quick-link {
+            color: #D1D5DB;
+        }
+        
+        .quick-link:hover {
+            background: #F3F4F6;
+            color: var(--primary-color);
+        }
+        
+        [data-bs-theme="dark"] .quick-link:hover {
+            background: #374151;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-text {
+            color: #6B7280;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        [data-bs-theme="dark"] .sidebar-text {
+            color: #9CA3AF;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .contact-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .contact-illustration {
+                display: none;
+            }
+            
+            .hero-visual {
+                height: 200px;
+            }
+            
+            .contact-sidebar {
+                padding-left: 0;
+                margin-top: 2rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-robot me-2"></i>CareerBERT
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="theme-toggle me-3" onclick="toggleTheme()">
+                    <i class="bi bi-moon-fill" id="theme-icon"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about_page') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('contact_page') }}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="contact-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <div class="hero-badge mb-4">
+                            <i class="bi bi-headset me-2"></i>
+                            <span>24/7 Support Available</span>
+                        </div>
+                        <h1 class="display-3 fw-bold mb-4">Get in <span class="text-gradient">Touch</span></h1>
+                        <p class="lead mb-4">Have questions about CareerBERT? Need technical support? Want to explore partnership opportunities? We're here to help you succeed.</p>
+                        
+                        <div class="contact-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">&lt;2h</div>
+                                <div class="stat-label">Response Time</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">98%</div>
+                                <div class="stat-label">Satisfaction Rate</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">Support Available</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-visual">
+                        <div class="contact-illustration">
+                            <div class="support-bubble bubble-1">
+                                <i class="bi bi-chat-heart"></i>
+                                <span>How can we help?</span>
+                            </div>
+                            <div class="support-bubble bubble-2">
+                                <i class="bi bi-lightbulb"></i>
+                                <span>Great question!</span>
+                            </div>
+                            <div class="support-bubble bubble-3">
+                                <i class="bi bi-check-circle"></i>
+                                <span>Problem solved!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Methods Section -->
+    <section class="contact-methods py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-4">Multiple Ways to Reach Us</h2>
+                    <p class="lead">Choose the method that works best for you</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="contact-method-card">
+                        <div class="method-icon email">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <h5 class="method-title">Email Support</h5>
+                        <p class="method-description">Get detailed help with technical questions and account issues.</p>
+                        <div class="method-info">
+                            <div class="info-item">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value">support@careerbert.com</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Response:</span>
+                                <span class="info-value">Within 2 hours</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-method" onclick="scrollToForm()">
+                            <i class="bi bi-send me-2"></i>Send Email
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="contact-method-card featured">
+                        <div class="featured-badge">Most Popular</div>
+                        <div class="method-icon chat">
+                            <i class="bi bi-chat-dots"></i>
+                        </div>
+                        <h5 class="method-title">Live Chat</h5>
+                        <p class="method-description">Get instant answers from our AI-powered support bot or human agents.</p>
+                        <div class="method-info">
+                            <div class="info-item">
+                                <span class="info-label">Availability:</span>
+                                <span class="info-value">24/7</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Response:</span>
+                                <span class="info-value">Instant</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-method primary" onclick="startLiveChat()">
+                            <i class="bi bi-chat-square-dots me-2"></i>Start Chat
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="contact-method-card">
+                        <div class="method-icon docs">
+                            <i class="bi bi-book"></i>
+                        </div>
+                        <h5 class="method-title">Documentation</h5>
+                        <p class="method-description">Find comprehensive guides, tutorials, and API documentation.</p>
+                        <div class="method-info">
+                            <div class="info-item">
+                                <span class="info-label">Articles:</span>
+                                <span class="info-value">100+ guides</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Updated:</span>
+                                <span class="info-value">Daily</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-method" onclick="browseDocs()">
+                            <i class="bi bi-arrow-right me-2"></i>Browse Docs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="contact-form-section py-5" id="contactFormSection">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="contact-form-header text-center mb-5">
+                        <h2 class="display-6 fw-bold mb-3">Send Us a Message</h2>
+                        <p class="lead">Fill out the form below and we'll get back to you within 2 hours</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="contact-form-card">
+                                <form id="contactForm">
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">
+                                            <i class="bi bi-person me-2"></i>Personal Information
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="firstName" class="form-label">First Name *</label>
+                                                <input type="text" class="form-control" id="firstName" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="lastName" class="form-label">Last Name *</label>
+                                                <input type="text" class="form-control" id="lastName" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="email" class="form-label">Email Address *</label>
+                                                <input type="email" class="form-control" id="email" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="company" class="form-label">Company (Optional)</label>
+                                                <input type="text" class="form-control" id="company">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-section">
+                                        <h6 class="form-section-title">
+                                            <i class="bi bi-chat-square-text me-2"></i>Your Message
+                                        </h6>
+                                        <div class="mb-3">
+                                            <label for="subject" class="form-label">Subject *</label>
+                                            <select class="form-select" id="subject" required>
+                                                <option value="">Choose a topic...</option>
+                                                <option value="general">General Inquiry</option>
+                                                <option value="technical">Technical Support</option>
+                                                <option value="billing">Billing Question</option>
+                                                <option value="feature">Feature Request</option>
+                                                <option value="partnership">Partnership Opportunity</option>
+                                                <option value="feedback">Feedback & Suggestions</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="priority" class="form-label">Priority Level</label>
+                                            <select class="form-select" id="priority">
+                                                <option value="low">Low - General question</option>
+                                                <option value="medium" selected>Medium - Need help soon</option>
+                                                <option value="high">High - Urgent issue</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="message" class="form-label">Message *</label>
+                                            <textarea class="form-control" id="message" rows="6" placeholder="Please provide as much detail as possible to help us assist you better..." required></textarea>
+                                            <div class="form-text">
+                                                <span id="charCount">0</span>/1000 characters
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-contact-submit btn-lg">
+                                            <i class="bi bi-send me-2"></i>Send Message
+                                        </button>
+                                        <button type="reset" class="btn btn-outline-secondary btn-lg ms-3">
+                                            <i class="bi bi-arrow-clockwise me-2"></i>Reset Form
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="contact-sidebar">
+                                <div class="sidebar-card">
+                                    <h6 class="sidebar-title">
+                                        <i class="bi bi-clock me-2"></i>Response Times
+                                    </h6>
+                                    <div class="response-times">
+                                        <div class="response-item">
+                                            <span class="response-type">General Inquiries</span>
+                                            <span class="response-time">2-4 hours</span>
+                                        </div>
+                                        <div class="response-item">
+                                            <span class="response-type">Technical Support</span>
+                                            <span class="response-time">1-2 hours</span>
+                                        </div>
+                                        <div class="response-item">
+                                            <span class="response-type">Urgent Issues</span>
+                                            <span class="response-time">30 minutes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="sidebar-card">
+                                    <h6 class="sidebar-title">
+                                        <i class="bi bi-question-circle me-2"></i>Quick Help
+                                    </h6>
+                                    <div class="quick-links">
+                                        <a href="#" class="quick-link">
+                                            <i class="bi bi-book me-2"></i>Documentation
+                                        </a>
+                                        <a href="#" class="quick-link">
+                                            <i class="bi bi-play-circle me-2"></i>Video Tutorials
+                                        </a>
+                                        <a href="#" class="quick-link">
+                                            <i class="bi bi-question-square me-2"></i>FAQ
+                                        </a>
+                                        <a href="#" class="quick-link">
+                                            <i class="bi bi-code-square me-2"></i>API Reference
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="sidebar-card">
+                                    <h6 class="sidebar-title">
+                                        <i class="bi bi-shield-check me-2"></i>Privacy & Security
+                                    </h6>
+                                    <p class="sidebar-text">Your information is encrypted and never shared with third parties. We're GDPR compliant and take data privacy seriously.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 CareerBERT. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Enhanced Contact Form Script -->
+    <script>
+        // Character counter for message textarea
+        document.getElementById('message').addEventListener('input', function() {
+            const charCount = this.value.length;
+            const charCountElement = document.getElementById('charCount');
+            charCountElement.textContent = charCount;
+            
+            if (charCount > 1000) {
+                charCountElement.style.color = '#DC2626';
+                this.value = this.value.substring(0, 1000);
+                charCountElement.textContent = '1000';
+            } else if (charCount > 800) {
+                charCountElement.style.color = '#F59E0B';
+            } else {
+                charCountElement.style.color = '#6B7280';
+            }
+        });
+        
+        // Enhanced form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const subject = document.getElementById('subject').value;
+            const priority = document.getElementById('priority').value;
+            const message = document.getElementById('message').value.trim();
+            
+            // Enhanced validation
+            if (!firstName || !lastName || !email || !subject || !message) {
+                showAlert('Please fill in all required fields.', 'danger');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Please enter a valid email address.', 'danger');
+                return;
+            }
+            
+            // Message length validation
+            if (message.length < 10) {
+                showAlert('Please provide a more detailed message (at least 10 characters).', 'warning');
+                return;
+            }
+            
+            // Simulate form submission with progress
+            const submitBtn = document.querySelector('.btn-contact-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending Message...';
+            submitBtn.disabled = true;
+            
+            // Add loading animation
+            submitBtn.classList.add('loading');
+            
+            setTimeout(() => {
+                // Success message
+                showAlert('Thank you for your message! We\'ll get back to you within 2 hours.', 'success');
+                
+                // Reset form
+                document.getElementById('contactForm').reset();
+                document.getElementById('charCount').textContent = '0';
+                document.getElementById('charCount').style.color = '#6B7280';
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 2000);
+        });
+        
+        // Scroll to form function
+        function scrollToForm() {
+            document.getElementById('contactFormSection').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+        
+        // Alert system
+        function showAlert(message, type) {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.custom-alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show custom-alert position-fixed`;
+            alertDiv.style.cssText = 'top: 100px; right: 20px; z-index: 9999; min-width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);';
+            
+            const iconMap = {
+                success: 'bi-check-circle-fill',
+                danger: 'bi-exclamation-triangle-fill',
+                warning: 'bi-exclamation-circle-fill',
+                info: 'bi-info-circle-fill'
+            };
+            
+            alertDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi ${iconMap[type]} me-2"></i>
+                    <div>${message}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Form field animations
+        document.querySelectorAll('.form-control, .form-select').forEach(field => {
+            field.addEventListener('focus', function() {
+                this.parentElement.classList.add('field-focused');
+            });
+            
+            field.addEventListener('blur', function() {
+                this.parentElement.classList.remove('field-focused');
+                if (this.value) {
+                    this.parentElement.classList.add('field-filled');
+                } else {
+                    this.parentElement.classList.remove('field-filled');
+                }
+            });
+        });
+        
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-bs-theme');
+            
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-bs-theme', 'light');
+                themeIcon.className = 'bi bi-moon-fill';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-bs-theme', 'dark');
+                themeIcon.className = 'bi bi-sun-fill';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Load saved theme and initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            html.setAttribute('data-bs-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+            
+            // Initialize form field states
+            document.querySelectorAll('.form-control, .form-select').forEach(field => {
+                if (field.value) {
+                    field.parentElement.classList.add('field-filled');
+                }
+            });
+        });
+        
+        // Start Live Chat function
+        function startLiveChat() {
+            // Show loading state
+            const chatBtn = event.target.closest('button');
+            const originalText = chatBtn.innerHTML;
+            chatBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Connecting...';
+            chatBtn.disabled = true;
+            
+            // Simulate chat initialization
+            setTimeout(() => {
+                // Create chat modal
+                const chatModal = document.createElement('div');
+                chatModal.className = 'chat-modal-overlay';
+                chatModal.innerHTML = `
+                    <div class="chat-modal">
+                        <div class="chat-header">
+                            <div class="chat-title">
+                                <div class="chat-avatar">
+                                    <i class="bi bi-robot"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">CareerBERT Support</h6>
+                                    <small class="text-success">
+                                        <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i>Online
+                                    </small>
+                                </div>
+                            </div>
+                            <button class="chat-close" onclick="closeChatModal()">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <div class="chat-body">
+                            <div class="chat-message bot-message">
+                                <div class="message-avatar">
+                                    <i class="bi bi-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hi! I'm CareerBERT's AI assistant. How can I help you today?</p>
+                                    <div class="quick-replies">
+                                        <button class="quick-reply" onclick="sendQuickReply('How does CareerBERT work?')">How does CareerBERT work?</button>
+                                        <button class="quick-reply" onclick="sendQuickReply('I need technical support')">Technical support</button>
+                                        <button class="quick-reply" onclick="sendQuickReply('Billing question')">Billing question</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-footer">
+                            <div class="chat-input-container">
+                                <input type="text" class="chat-input" placeholder="Type your message..." onkeypress="handleChatKeyPress(event)">
+                                <button class="chat-send" onclick="sendChatMessage()">
+                                    <i class="bi bi-send"></i>
+                                </button>
+                            </div>
+                            <div class="chat-footer-text">
+                                <small class="text-muted">Powered by CareerBERT AI • <a href="#" onclick="scrollToForm(); closeChatModal();">Contact human support</a></small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(chatModal);
+                
+                // Reset button
+                chatBtn.innerHTML = originalText;
+                chatBtn.disabled = false;
+                
+                // Add chat styles
+                addChatStyles();
+            }, 1500);
+        }
+        
+        // Browse Documentation function
+        function browseDocs() {
+            // Show loading state
+            const docsBtn = event.target.closest('button');
+            const originalText = docsBtn.innerHTML;
+            docsBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Loading...';
+            docsBtn.disabled = true;
+            
+            // Simulate loading and open documentation
+            setTimeout(() => {
+                // Create docs modal
+                const docsModal = document.createElement('div');
+                docsModal.className = 'docs-modal-overlay';
+                docsModal.innerHTML = `
+                    <div class="docs-modal">
+                        <div class="docs-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-book me-2"></i>CareerBERT Documentation
+                            </h5>
+                            <button class="docs-close" onclick="closeDocsModal()">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <div class="docs-body">
+                            <div class="docs-search">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" placeholder="Search documentation...">
+                                </div>
+                            </div>
+                            <div class="docs-categories">
+                                <h6 class="docs-section-title">Popular Documentation</h6>
+                                <div class="docs-links">
+                                    <a href="https://github.com/CareerBERT/CareerBERT" target="_blank" class="docs-link">
+                                        <i class="bi bi-github me-2"></i>
+                                        <div>
+                                            <div class="link-title">GitHub Repository</div>
+                                            <div class="link-desc">Source code and technical documentation</div>
+                                        </div>
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                    <a href="https://huggingface.co/models?search=careerbert" target="_blank" class="docs-link">
+                                        <i class="bi bi-robot me-2"></i>
+                                        <div>
+                                            <div class="link-title">Model Documentation</div>
+                                            <div class="link-desc">BERT model specifications and usage</div>
+                                        </div>
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                    <a href="https://flask.palletsprojects.com/" target="_blank" class="docs-link">
+                                        <i class="bi bi-server me-2"></i>
+                                        <div>
+                                            <div class="link-title">Flask Framework</div>
+                                            <div class="link-desc">Web framework documentation</div>
+                                        </div>
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                    <a href="https://pytorch.org/docs/" target="_blank" class="docs-link">
+                                        <i class="bi bi-lightning me-2"></i>
+                                        <div>
+                                            <div class="link-title">PyTorch Documentation</div>
+                                            <div class="link-desc">Deep learning framework docs</div>
+                                        </div>
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                    <a href="https://scikit-learn.org/stable/" target="_blank" class="docs-link">
+                                        <i class="bi bi-graph-up me-2"></i>
+                                        <div>
+                                            <div class="link-title">Scikit-learn</div>
+                                            <div class="link-desc">Machine learning library documentation</div>
+                                        </div>
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                </div>
+                                
+                                <h6 class="docs-section-title mt-4">API Reference</h6>
+                                <div class="docs-links">
+                                    <div class="docs-link disabled">
+                                        <i class="bi bi-code-square me-2"></i>
+                                        <div>
+                                            <div class="link-title">REST API Documentation</div>
+                                            <div class="link-desc">Coming soon - API endpoints and examples</div>
+                                        </div>
+                                        <span class="badge bg-warning">Soon</span>
+                                    </div>
+                                    <div class="docs-link disabled">
+                                        <i class="bi bi-puzzle me-2"></i>
+                                        <div>
+                                            <div class="link-title">SDK & Libraries</div>
+                                            <div class="link-desc">Coming soon - Integration libraries</div>
+                                        </div>
+                                        <span class="badge bg-warning">Soon</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="docs-footer">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Can't find what you're looking for? <a href="#" onclick="scrollToForm(); closeDocsModal();">Contact our support team</a>
+                            </small>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(docsModal);
+                
+                // Reset button
+                docsBtn.innerHTML = originalText;
+                docsBtn.disabled = false;
+                
+                // Add docs styles
+                addDocsStyles();
+            }, 1000);
+        }
+        
+        // Chat helper functions
+        function closeChatModal() {
+            const modal = document.querySelector('.chat-modal-overlay');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+        
+        function closeDocsModal() {
+            const modal = document.querySelector('.docs-modal-overlay');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+        
+        function sendQuickReply(message) {
+            const chatBody = document.querySelector('.chat-body');
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message user-message';
+            userMessage.innerHTML = `
+                <div class="message-content">
+                    <p>${message}</p>
+                </div>
+            `;
+            chatBody.appendChild(userMessage);
+            
+            // Simulate bot response
+            setTimeout(() => {
+                const botResponse = document.createElement('div');
+                botResponse.className = 'chat-message bot-message';
+                const responses = {
+                    'How does CareerBERT work?': 'CareerBERT uses advanced AI to analyze your resume and match it with job descriptions. It provides detailed compatibility scores and improvement suggestions.',
+                    'I need technical support': 'I can help with basic technical questions. For complex issues, I recommend contacting our human support team using the form below.',
+                    'Billing question': 'For billing inquiries, please contact our support team directly. They can access your account and help resolve any billing issues.'
+                };
+                
+                botResponse.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p>${responses[message] || 'Thank you for your question. Our support team will help you with that.'}</p>
+                    </div>
+                `;
+                chatBody.appendChild(botResponse);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+            
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+        
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+        
+        function sendChatMessage() {
+            const input = document.querySelector('.chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            sendQuickReply(message);
+            input.value = '';
+        }
+        
+        // Add chat modal styles
+        function addChatStyles() {
+            if (document.getElementById('chat-styles')) return;
+            
+            const chatStyles = document.createElement('style');
+            chatStyles.id = 'chat-styles';
+            chatStyles.textContent = `
+                .chat-modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease;
+                }
+                
+                .chat-modal {
+                    background: white;
+                    border-radius: 16px;
+                    width: 400px;
+                    height: 600px;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    animation: slideUp 0.3s ease;
+                }
+                
+                [data-bs-theme="dark"] .chat-modal {
+                    background: #1F2937;
+                }
+                
+                .chat-header {
+                    padding: 1rem;
+                    border-bottom: 1px solid #E5E7EB;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+                
+                [data-bs-theme="dark"] .chat-header {
+                    border-color: #374151;
+                }
+                
+                .chat-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                }
+                
+                .chat-avatar {
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                }
+                
+                .chat-close {
+                    background: none;
+                    border: none;
+                    font-size: 1.25rem;
+                    cursor: pointer;
+                    color: #6B7280;
+                    padding: 0.25rem;
+                    border-radius: 4px;
+                }
+                
+                .chat-close:hover {
+                    background: #F3F4F6;
+                    color: #374151;
+                }
+                
+                [data-bs-theme="dark"] .chat-close:hover {
+                    background: #374151;
+                    color: #E5E7EB;
+                }
+                
+                .chat-body {
+                    flex: 1;
+                    padding: 1rem;
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                
+                .chat-message {
+                    display: flex;
+                    gap: 0.75rem;
+                    align-items: flex-start;
+                }
+                
+                .user-message {
+                    flex-direction: row-reverse;
+                }
+                
+                .message-avatar {
+                    width: 32px;
+                    height: 32px;
+                    background: #E5E7EB;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #6B7280;
+                    flex-shrink: 0;
+                }
+                
+                .bot-message .message-avatar {
+                    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                    color: white;
+                }
+                
+                .message-content {
+                    background: #F3F4F6;
+                    padding: 0.75rem 1rem;
+                    border-radius: 16px;
+                    max-width: 80%;
+                }
+                
+                [data-bs-theme="dark"] .message-content {
+                    background: #374151;
+                }
+                
+                .user-message .message-content {
+                    background: var(--primary-color);
+                    color: white;
+                }
+                
+                .message-content p {
+                    margin: 0;
+                    font-size: 0.875rem;
+                    line-height: 1.4;
+                }
+                
+                .quick-replies {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    margin-top: 0.75rem;
+                }
+                
+                .quick-reply {
+                    background: white;
+                    border: 1px solid #E5E7EB;
+                    border-radius: 8px;
+                    padding: 0.5rem 0.75rem;
+                    font-size: 0.875rem;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    text-align: left;
+                }
+                
+                .quick-reply:hover {
+                    background: var(--primary-color);
+                    color: white;
+                    border-color: var(--primary-color);
+                }
+                
+                .chat-footer {
+                    padding: 1rem;
+                    border-top: 1px solid #E5E7EB;
+                }
+                
+                [data-bs-theme="dark"] .chat-footer {
+                    border-color: #374151;
+                }
+                
+                .chat-input-container {
+                    display: flex;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                }
+                
+                .chat-input {
+                    flex: 1;
+                    border: 1px solid #E5E7EB;
+                    border-radius: 20px;
+                    padding: 0.5rem 1rem;
+                    font-size: 0.875rem;
+                }
+                
+                .chat-send {
+                    background: var(--primary-color);
+                    border: none;
+                    border-radius: 50%;
+                    width: 36px;
+                    height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    cursor: pointer;
+                }
+                
+                .chat-footer-text {
+                    text-align: center;
+                }
+            `;
+            document.head.appendChild(chatStyles);
+        }
+        
+        // Add docs modal styles
+        function addDocsStyles() {
+            if (document.getElementById('docs-styles')) return;
+            
+            const docsStyles = document.createElement('style');
+            docsStyles.id = 'docs-styles';
+            docsStyles.textContent = `
+                .docs-modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease;
+                }
+                
+                .docs-modal {
+                    background: white;
+                    border-radius: 16px;
+                    width: 90%;
+                    max-width: 600px;
+                    max-height: 80vh;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    animation: slideUp 0.3s ease;
+                }
+                
+                [data-bs-theme="dark"] .docs-modal {
+                    background: #1F2937;
+                }
+                
+                .docs-header {
+                    padding: 1.5rem;
+                    border-bottom: 1px solid #E5E7EB;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+                
+                [data-bs-theme="dark"] .docs-header {
+                    border-color: #374151;
+                }
+                
+                .docs-close {
+                    background: none;
+                    border: none;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                    color: #6B7280;
+                    padding: 0.25rem;
+                    border-radius: 4px;
+                }
+                
+                .docs-close:hover {
+                    background: #F3F4F6;
+                    color: #374151;
+                }
+                
+                [data-bs-theme="dark"] .docs-close:hover {
+                    background: #374151;
+                    color: #E5E7EB;
+                }
+                
+                .docs-body {
+                    flex: 1;
+                    padding: 1.5rem;
+                    overflow-y: auto;
+                }
+                
+                .docs-search {
+                    margin-bottom: 2rem;
+                }
+                
+                .docs-section-title {
+                    color: #1F2937;
+                    font-weight: 600;
+                    margin-bottom: 1rem;
+                }
+                
+                [data-bs-theme="dark"] .docs-section-title {
+                    color: #F9FAFB;
+                }
+                
+                .docs-links {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+                
+                .docs-link {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    padding: 1rem;
+                    background: #F9FAFB;
+                    border: 1px solid #E5E7EB;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    color: #374151;
+                    transition: all 0.2s ease;
+                }
+                
+                [data-bs-theme="dark"] .docs-link {
+                    background: #374151;
+                    border-color: #4B5563;
+                    color: #E5E7EB;
+                }
+                
+                .docs-link:hover:not(.disabled) {
+                    background: #F3F4F6;
+                    border-color: var(--primary-color);
+                    color: var(--primary-color);
+                    text-decoration: none;
+                    transform: translateX(4px);
+                }
+                
+                [data-bs-theme="dark"] .docs-link:hover:not(.disabled) {
+                    background: #4B5563;
+                }
+                
+                .docs-link.disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+                
+                .link-title {
+                    font-weight: 600;
+                    margin-bottom: 0.25rem;
+                }
+                
+                .link-desc {
+                    font-size: 0.875rem;
+                    color: #6B7280;
+                }
+                
+                [data-bs-theme="dark"] .link-desc {
+                    color: #9CA3AF;
+                }
+                
+                .docs-footer {
+                    padding: 1rem 1.5rem;
+                    border-top: 1px solid #E5E7EB;
+                    text-align: center;
+                }
+                
+                [data-bs-theme="dark"] .docs-footer {
+                    border-color: #374151;
+                }
+                
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(docsStyles);
+        }
+        
+        // Add some CSS for loading animation
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-contact-submit.loading {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .btn-contact-submit.loading::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                animation: loading-shimmer 1.5s infinite;
+            }
+            
+            @keyframes loading-shimmer {
+                0% { left: -100%; }
+                100% { left: 100%; }
+            }
+            
+            .field-focused .form-label {
+                color: var(--primary-color) !important;
+                transform: scale(0.95);
+            }
+            
+            .field-filled .form-label {
+                font-weight: 600;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
